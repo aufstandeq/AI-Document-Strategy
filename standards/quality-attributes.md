@@ -1,103 +1,93 @@
 # Quality Attributes
 
 ## Document Status
-Draft
+Approved
 
 ## Purpose
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+This document defines the quality attribute targets (non-functional requirements) for the Distributed Payment Reconciliation Subsystem, establishing measurable goals for system operations and architecture health.
 
 ## Owner
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Architecture Team
 
 ## Last Updated
 2026-06-11
 
 ## Availability
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Ensure that the subsystem is available to receive real-time webhook payloads from payment gateways, preventing gateway callback retries and ensuring timely ingestion.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- 99.9% availability for the HTTP webhook receiver endpoint over any rolling 30-day period.
+- Maximum endpoint downtime of no more than 43 minutes per month.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Continuous HTTP ping probes from external synthetic monitoring tools.
+- Real-time logging of webhook ingestion success rates via ingress server logs.
 
 ## Reliability
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Guarantee that no transaction is skipped, lost, or silently corrupted during fetching, ingestion, or matching.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Zero (0%) silent failure rate for transaction matching processes.
+- 100% accuracy in reconciling processed transactions against gateway settlement records.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Daily end-of-day database reconciliation counts, comparing the number of gateway webhooks queued in `extraction_schema` to records processed in `matching_schema`.
 
 ## Scalability
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Ensure the system can scale vertically to handle seasonal transaction spikes (e.g., peak sales periods) without bottlenecking.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Ability to ingest and process up to 1,000,000 transactions per day.
+- Database CPU usage must remain below 75% during maximum processing loads.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Load testing simulation of peak daily transactions in staging environment.
+- DB instance CPU metrics captured on database monitoring dashboards.
 
 ## Performance
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Process transaction reconciliation within the target business latency window.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Complete daily matching runs and ledger syncing within 4 hours from the close of the daily business window.
+- In-process matching execution speed of at least 500 transactions per second.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Logging job start and completion timestamps in the `ledger_schema` job run history.
+- APM execution tracing of matching functions.
 
 ## Security
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Secure payment transaction details, API credentials, and verify incoming gateway request signatures to prevent fraudulent inserts.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- 100% of webhook requests validated using cryptographic signatures (Stripe-Signature and PayPal-Auth-Algo headers).
+- Zero storage of PCI-scoped credit card PANs (Primary Account Numbers) inside subsystem schemas.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- CI/CD build stage scanning of repository code for hardcoded secrets.
+- Automated code reviews and pen-testing of signature validation code.
 
 ## Maintainability
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Ensure that module boundaries are strictly preserved to simplify future code refactoring or microservice migration.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Zero architectural dependency violations between modules (e.g., zero direct imports of extraction internals by matching/ledger modules).
+- Minimum unit test coverage of 90% for matching engine classes.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Automated check runner executing boundary analysis rules (e.g., import-linter/ArchUnit) on every code commit.
+- Code coverage reports generated during test phases.
 
 ## Observability
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Maintain full tracing visibility for every transaction lifecycle state change from ingestion to ledger post.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- 100% of log statements associated with a webhook payload or batch reconciliation run must carry a `correlation_id`.
+- Logging 100% of slow database operations exceeding a 500ms execution threshold.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Log parsing queries auditing correlation field presence.
+- Slow query logging enabled on the PostgreSQL database cluster.
 
 ## Compliance
 ### Objective
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+Ensure compliance with corporate financial audit controls (SOX) and data protection mandates.
 ### Target Metrics
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- 100% of exception resolution actions (who resolved, when, override reason) written to immutable audit logs.
+- Audit logs retained securely in read-only storage for 7 years.
 ### Measurement Method
-<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
-TBD
+- Regular database schema reviews of the `ledger_schema.audit_logs` table constraints.
+- Annual corporate compliance audit reviews.
+

@@ -17,8 +17,10 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-name: '3.x'
+        python-version: '3.x'
 
     - name: Run verification script
       run: |
         python verify_docs.py
+        if [ -f verify_e2e.py ]; then python verify_e2e.py; fi
+
