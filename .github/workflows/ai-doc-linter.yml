@@ -1,7 +1,24 @@
-# ai-doc-linter.yml
-#
-# This file is a placeholder for future CI workflows that will validate the 
-# documentation structure, links, syntax, and compliance rules of this 
-# architecture repository.
-#
-# Validation logic and workflow steps are not yet implemented.
+name: Architecture Repo Linter
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-name: '3.x'
+
+    - name: Run verification script
+      run: |
+        python verify_docs.py
