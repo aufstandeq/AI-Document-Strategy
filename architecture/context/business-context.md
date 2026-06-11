@@ -1,0 +1,43 @@
+# Business Context
+
+## Document Status
+Draft
+
+## Purpose
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Owner
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Last Updated
+2026-06-11
+
+## Business Objectives
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Success Metrics
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Stakeholders
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Constraints
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Assumptions
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Risks
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+
+## Out of Scope
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
