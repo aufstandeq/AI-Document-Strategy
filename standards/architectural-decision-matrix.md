@@ -59,9 +59,51 @@ Select this if the system is driven by intermittent workloads, event processing,
 
 ---
 
-## 4. AI Prompt Hook (How to Populate Standards)
+## 4. AI Prompt Hooks (How to Populate Standards & Context)
 
-Once a topology is chosen, copy the template block below and paste it into your AI coding assistant to bootstrap the specific rules in `./standards/technical-standards.md` and `./standards/quality-attributes.md`.
+Once a topology is chosen, copy the appropriate template block below and paste it into your AI assistant to bootstrap your architecture repository documents.
+
+### 4.1 Solutions Architect Prompt: Initial Context Setup
+Use this hook to populate the high-level context, actor roles, and external integrations based on your product requirements.
+
+```text
+SYSTEM INSTRUCTION: You are an Expert Solutions Architect.
+We are initiating a new project with the following core characteristics:
+- Business Goal: [INSERT BRIEF BUSINESS OBJECTIVE]
+- Primary Users/Actors: [INSERT KEY ACTORS/ROLES, e.g., Customers, Admin]
+- External Dependencies: [INSERT INTEGRATIONS, e.g., Stripe, SendGrid]
+
+Based on these parameters, please generate:
+1. The Business Context for architecture/context/business-context.md:
+   - Specific Business Objectives, Success Metrics, and Constraints.
+2. The Actors and Roles mapping for architecture/context/actors-and-roles.md:
+   - A table listing Actor, Responsibility, Role, and Security Scope.
+3. The External Systems mapping for architecture/context/external-systems.md:
+   - A table mapping Upstream/Downstream systems, Integration Responsibilities, and Ownership.
+
+Ensure all output strictly adheres to the repository's metadata header rules and relative pathing constraints.
+```
+
+### 4.2 Solutions Architect Prompt: Principles & Ways of Working
+Use this hook to establish the architectural principles and integration governance in `technical-standards.md` based on your chosen topology.
+
+```text
+SYSTEM INSTRUCTION: You are an Expert Solutions Architect.
+We have selected the [INSERT CHOSEN TOPOLOGY: Monolith/Modular Monolith/Microservices/Serverless] topology and are establishing the architectural principles and ways of working.
+
+Please generate the high-level governance section for standards/technical-standards.md covering:
+1. Architectural Principles:
+   - 3-5 core invariants (e.g., Data Sovereignty, API-First, Security-by-Default) tailored for this topology.
+2. Integration Standards:
+   - High-level interface rules (e.g., REST vs gRPC, event contract registries, error propagation patterns).
+3. Ways of Working (Governance):
+   - The process for proposing, reviewing, and approving changes to these standards using ADRs.
+
+Ensure output is written strictly in Markdown conforming to the repository metadata rules.
+```
+
+### 4.3 Software Architect Prompt: Technical Standards & Quality Attributes
+Use this hook to generate concrete codebase standards and quality metrics.
 
 ```text
 SYSTEM INSTRUCTION: You are an Expert Software Architect.
@@ -78,3 +120,4 @@ Based on this topology, please generate:
 
 Write this strictly in Markdown conforming to the repository's metadata header rules.
 ```
+
