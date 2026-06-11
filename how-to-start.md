@@ -55,3 +55,14 @@ Use the chosen topology profile from the matrix to prompt an AI partner to gener
 Once standards are populated:
 1. Point your development tools/AI to the standards files as constraints.
 2. Ensure all changes are validated locally via the linter script (`python3 verify_docs.py`) to verify structural integrity before merging.
+
+---
+
+## 4. AI Behavior Instructions
+
+AI agents and assistants interacting with this repository must adhere to the following execution rules:
+
+1.  **Do Not Read the Archive:** The `/archive` directory contains out-of-date system states. Never pull information from `archive/` into your active context or search results unless explicitly commanded (e.g., *"Compare current database schema with the deprecated schema in archive..."*).
+2.  **Strict Boundary Conformity:** Do not suggest code implementations that violate the defined boundaries in `architecture/views/logical-view.md` or the `systems/` folders.
+3.  **Halt on TBD:** If a required integration, scope, or standard is marked as `TBD` or `PENDING_DISCOVERY`, stop and flag the missing information to the user. Do not make assumptions or auto-fill values.
+

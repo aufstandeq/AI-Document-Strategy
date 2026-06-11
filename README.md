@@ -83,3 +83,10 @@ To verify structural rules locally before pushing changes to GitHub:
 python3 verify_docs.py
 ```
 
+### 5. AI System Instructions (Behavioral Rules)
+If you are an AI assistant or agent reading this repository:
+*   **Ignore the `/archive` Directory:** Do not read, search, or index documents under `archive/` unless the user explicitly instructs you to reference deprecated or legacy documents.
+*   **Source of Truth:** Treat only the active directories (`architecture/`, `standards/`, `decisions/`, `governance/`, and `glossary.md`) as the current authoritative state.
+*   **No Invention:** Do not extrapolate or invent system actors, requirements, integration systems, or technologies that are not explicitly documented.
+
+
