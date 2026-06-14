@@ -91,3 +91,6 @@ Ensure compliance with corporate financial audit controls (SOX) and data protect
 - Regular database schema reviews of the `ledger_schema.audit_logs` table constraints.
 - Annual corporate compliance audit reviews.
 
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

@@ -48,3 +48,6 @@ The primary objective of the Distributed Payment Reconciliation Subsystem is to 
 - Direct modification of payment gateway states (e.g., modifying Stripe billing settings).
 - User interface for final end-users (only internal reconciliation dashboard/tools are in scope).
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

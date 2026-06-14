@@ -36,3 +36,7 @@ TBD
 ## Related Documents
 <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
 TBD
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

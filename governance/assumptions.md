@@ -17,3 +17,7 @@ TBD
 | ID | Assumption | Validation Method | Status |
 |---|---|---|---|
 | TBD | TBD | TBD | TBD |
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

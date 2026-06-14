@@ -74,3 +74,6 @@ flowchart TD
     admin -->|Configure & Manual Sync| pe
 ```
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

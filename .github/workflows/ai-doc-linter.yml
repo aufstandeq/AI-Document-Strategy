@@ -1,4 +1,4 @@
-name: Architecture Repo Linter
+name: Architecture Repo Audit
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ main, master ]
 
 jobs:
-  lint:
+  audit:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +19,12 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Run verification script
-      run: |
-        python verify_docs.py
-        if [ -f verify_e2e.py ]; then python verify_e2e.py; fi
+    - name: Structural validation (hard gate)
+      run: python3 verify_docs.py
 
+    - name: Cross-repository audit (hard gate)
+      run: python3 verify_e2e.py
+
+    - name: Coverage report (informational)
+      run: python3 verify_coverage.py
+      continue-on-error: true

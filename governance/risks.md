@@ -17,3 +17,7 @@ TBD
 | ID | Risk | Impact | Mitigation | Status |
 |---|---|---|---|---|
 | TBD | TBD | TBD | TBD | TBD |
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

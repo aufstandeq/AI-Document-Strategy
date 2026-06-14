@@ -35,12 +35,19 @@ TBD
 
 ## Repository Navigation
 * [how-to-start.md](./how-to-start.md): Onboarding guide and operational workflow (Read this next).
-* [architecture/](./architecture/index.md): System contexts, views, and specific sub-system templates.
-* [standards/](./standards/technical-standards.md): Engineering, coding, testing, and quality attribute standards.
-* [decisions/](./decisions/0001-record-architecture-decisions.md): Architecture Decision Records (ADRs).
-* [governance/](./governance/open-questions.md): Risk logs, assumption trackers, and open questions logs.
-* [archive/](./archive/README.md): Retrospective, superseded, or legacy architectural artifacts.
+* [onboarding-dev.md](./onboarding-dev.md): Developer-specific onboarding with local verification commands.
 * [glossary.md](./glossary.md): Authoritative domain vocabulary and technical terms.
+* [architecture/](./architecture/index.md): System contexts, views, and specific sub-system templates.
+* [decisions/](./decisions/0001-record-architecture-decisions.md): Architecture Decision Records (ADRs).
+* [standards/](./standards/technical-standards.md): Engineering, coding, testing, and quality attribute standards.
+  * [quality-attributes.md](./standards/quality-attributes.md): Non-functional requirement targets.
+  * [architectural-decision-matrix.md](./standards/architectural-decision-matrix.md): Topology selection framework.
+* [governance/](./governance/open-questions.md): Risk logs, assumption trackers, and open questions.
+  * [risks.md](./governance/risks.md): Risk register.
+  * [assumptions.md](./governance/assumptions.md): Documented assumptions.
+  * [migration_log.md](./governance/migration_log.md): Change and migration history.
+  * [red-team-audit-report.md](./governance/red-team-audit-report.md): Documentation linter audit findings.
+* [archive/](./archive/README.md): Retrospective, superseded, or legacy architectural artifacts.
 
 ## Operational Guide
 
@@ -83,7 +90,19 @@ To verify structural rules locally before pushing changes to GitHub:
 python3 verify_docs.py
 ```
 
-### 5. AI System Instructions (Behavioral Rules)
+### 5. Marking Architectural Gaps
+
+When a section or decision is known to be incomplete but the answer is not yet available, use an `ARCH-GAP` inline comment tag rather than leaving a bare `TBD`. This allows the audit scripts to inventory all open gaps across the repo.
+
+```markdown
+<!-- ARCH-GAP: [Short description of what is unknown or unresolved]. [Owner: Team/Person]. -->
+```
+
+- `Owner:` is required — the audit script will flag gaps without an owner.
+- `ARCH-GAP` tags appear in the `verify_coverage.py` gap inventory report.
+- Once resolved, remove the comment and document the decision in an ADR if appropriate.
+
+### 7. AI System Instructions (Behavioral Rules)
 If you are an AI assistant or agent reading this repository:
 *   **Ignore the `/archive` Directory:** Do not read, search, or index documents under `archive/` unless the user explicitly instructs you to reference deprecated or legacy documents.
 *   **Source of Truth:** Treat only the active directories (`architecture/`, `standards/`, `decisions/`, `governance/`, and `glossary.md`) as the current authoritative state.

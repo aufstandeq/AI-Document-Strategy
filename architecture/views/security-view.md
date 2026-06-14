@@ -50,3 +50,7 @@ flowchart LR
  User((User)) -->|HTTPS| Auth[Auth Proxy]
  Auth --> Service[Backend Service]
 ```
+
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

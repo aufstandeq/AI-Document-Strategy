@@ -79,3 +79,6 @@ flowchart TD
     container -->|REST POST sync report| billing
 ```
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

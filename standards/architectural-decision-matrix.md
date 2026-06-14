@@ -121,3 +121,6 @@ Based on this topology, please generate:
 Write this strictly in Markdown conforming to the repository's metadata header rules.
 ```
 
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

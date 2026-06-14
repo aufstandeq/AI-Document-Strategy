@@ -40,3 +40,7 @@ TBD
 ```mermaid
 erDiagram
  PLACEHOLDER ||--o{ TBD : relates
+
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

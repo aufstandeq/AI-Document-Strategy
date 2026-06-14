@@ -194,3 +194,7 @@ Beyond the static verification script, the wider documentation governance workfl
             python verify_docs.py
             python verify_e2e.py
   ```
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

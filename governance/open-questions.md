@@ -22,3 +22,7 @@ TBD
 | ID | Question | Owner | Impacted Documents | Status | Resolution |
 |---|---|---|---|---|---|
 | TBD | TBD | TBD | TBD | OPEN | TBD |
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

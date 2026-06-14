@@ -65,4 +65,5 @@ AI agents and assistants interacting with this repository must adhere to the fol
 1.  **Do Not Read the Archive:** The `/archive` directory contains out-of-date system states. Never pull information from `archive/` into your active context or search results unless explicitly commanded (e.g., *"Compare current database schema with the deprecated schema in archive..."*).
 2.  **Strict Boundary Conformity:** Do not suggest code implementations that violate the defined boundaries in `architecture/views/logical-view.md` or the `systems/` folders.
 3.  **Halt on TBD:** If a required integration, scope, or standard is marked as `TBD` or `PENDING_DISCOVERY`, stop and flag the missing information to the user. Do not make assumptions or auto-fill values.
+4.  **Glossary Reference Requirement:** Every new active document you propose or create must include at least one relative markdown link to `glossary.md`. This ensures domain vocabulary is consistently anchored. Example: `See [Glossary](../../glossary.md) for definitions of key terms used here.`
 

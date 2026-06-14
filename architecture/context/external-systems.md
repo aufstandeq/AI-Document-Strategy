@@ -38,3 +38,6 @@ Architecture Team
 | PayPal API | Upstream Third-Party Service | Provides transaction search, payout status, and webhook events for PayPal transactions | External (PayPal) / Architecture Team |
 | Internal Billing Ledger | Downstream Internal System | Consumes reconciled payment reports and exceptions to update corporate ledger records | Internal (Billing & Core Finance Team) |
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

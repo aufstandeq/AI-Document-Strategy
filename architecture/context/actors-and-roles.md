@@ -44,3 +44,6 @@ Architecture Team
 | Operations Admin | Monitor runs, update API configs, trigger manual runs | Operations Admin (`operations_admin`) | `read:reconciliation`, `write:system` |
 | Systems Developer | Modify code, configure schemas, update matching logic | Systems Developer (`systems_developer`) | `*` (All scopes / Full Admin) |
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

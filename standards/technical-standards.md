@@ -41,3 +41,6 @@ Architecture Team
 - **Mock-Based Ingestion Tests:** Build integration tests with mocked Stripe/PayPal webhooks to verify exception capture pathways.
 - **Rule Verification:** Maintain comprehensive unit test suites covering 100% of the matching engine's logic.
 
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.

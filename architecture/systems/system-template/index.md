@@ -49,3 +49,19 @@ TBD
 ## Open Questions
 <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
 TBD
+
+---
+
+## Architectural Gaps
+
+Tag unresolved design decisions with `ARCH-GAP` inline comments anywhere in
+this document. The `verify_coverage.py` script inventories these repo-wide.
+`Owner:` is required — the audit script will flag gaps without one.
+
+Format: `<!-- ARCH-GAP: [What is unknown]. [Owner: Team/Person]. -->`
+
+---
+
+## References
+
+See [Glossary](../../../glossary.md) for definitions of key terms used in this document.

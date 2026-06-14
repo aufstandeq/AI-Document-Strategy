@@ -44,3 +44,7 @@ sequenceDiagram
  User->>Placeholder: Request
  Placeholder-->>User: Response
 ```
+
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.

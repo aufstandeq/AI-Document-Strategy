@@ -80,3 +80,6 @@ flowchart TD
     admin[Operations Admin] -->|Trigger Sync| fetcher
 ```
 
+---
+
+See [Glossary](../../glossary.md) for definitions of key terms used in this document.
