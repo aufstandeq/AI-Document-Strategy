@@ -1,0 +1,195 @@
+# SKILL.md — Agent Policy Document
+
+## Document Status
+Approved
+
+## Purpose
+Define the governing rules for all agents operating within the agentic documentation loop. This file is read-only to agents and is loaded once at loop start. It replaces guesswork with explicit constraints.
+
+## Owner
+Architecture Team
+
+## Last Updated
+2026-06-25
+
+---
+
+See [Glossary](../glossary.md) for definitions of key terms used in this document.
+
+---
+
+## 1. Role Definitions
+
+### Orchestrator
+The Python process (`run_agent_loop.py`) that manages the full loop lifecycle. It reads and writes STATE.md, spawns sub-agents, invokes verifier scripts, and enforces all stop rules. It does not write documentation directly.
+
+### Maker (Implementer Sub-Agent)
+Explores the repository, identifies incomplete or incorrect documentation, and drafts updates. Operates within the write allowlist only. Calls scaffold scripts rather than creating files directly. System prompt: [maker_system_prompt.md](./prompts/maker_system_prompt.md).
+
+### Checker (Verifier Sub-Agent)
+Reviews the Maker's proposed changes against this SKILL.md and the repository conventions. Does not modify files — outputs a structured review with PASS or FAIL and specific issues. Runs before the deterministic verifier scripts. System prompt: [checker_system_prompt.md](./prompts/checker_system_prompt.md).
+
+---
+
+## 2. Write Allowlist
+
+Sub-agents may only write to the following paths. Any write attempt outside this list must be rejected by the orchestrator before execution.
+
+```
+architecture/context/
+architecture/views/
+architecture/systems/          (new systems via scaffold_system.py only)
+decisions/                     (new ADRs via scaffold_adr.py only)
+governance/risks.md
+governance/assumptions.md
+governance/open-questions.md
+governance/migration_log.md
+glossary.md
+agent/STATE.md                 (orchestrator only)
+agent/logs/                    (orchestrator only)
+```
+
+---
+
+## 3. Write Blocklist
+
+Writes to any of the following paths fail the loop immediately and trigger escalation. These files define the harness — an agent modifying them is reward-hacking.
+
+```
+verify_docs.py
+verify_e2e.py
+verify_coverage.py
+scaffold_adr.py
+scaffold_system.py
+run_agent_loop.py
+.github/
+agent/SKILL.md
+agent/GOAL.md
+agent/prompts/
+README.md
+how-to-start.md
+onboarding-dev.md
+standards/
+```
+
+---
+
+## 4. Documentation Rules
+
+Every markdown file the Maker creates or modifies must satisfy all of the following:
+
+### 4.1 Required Header Block
+Every file must open with this exact structure:
+
+```markdown
+# [Document Title]
+
+## Document Status
+Draft
+
+## Purpose
+[One sentence describing what this document covers]
+
+## Owner
+[Team or person name]
+
+## Last Updated
+YYYY-MM-DD
+```
+
+### 4.2 Document Status Values
+`Document Status` must be exactly one of:
+- `Draft`
+- `In Review`
+- `Approved`
+- `Deprecated`
+
+Any other value fails `verify_docs.py`.
+
+### 4.3 Incomplete Sections
+Never use bare `TBD`. All incomplete sections must use:
+
+```markdown
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
+```
+
+### 4.4 Architectural Gap Tags
+When a section is known to be incomplete and the answer is not yet available:
+
+```markdown
+<!-- ARCH-GAP: [Short description of what is unknown]. [Owner: TeamName]. -->
+```
+
+The `Owner:` field is required. Gaps without an owner fail `verify_e2e.py`.
+
+### 4.5 Link Rules
+- All cross-document links must use relative paths (e.g., `../glossary.md`)
+- Absolute paths (`/architecture/...`) fail the linter
+- Every active document must contain at least one link to `glossary.md`
+
+### 4.6 Scaffold Scripts
+- New ADRs: call `python3 scaffold_adr.py "<title>"` — never create ADR files by hand
+- New systems: call `python3 scaffold_system.py <name>` — never copy system-template manually
+
+---
+
+## 5. Mandatory Tool Sequence
+
+The orchestrator must execute steps in this exact order each iteration:
+
+```
+1. Read agent/STATE.md → load iteration context
+2. Invoke Maker sub-agent with: SKILL.md + STATE.md + target file list
+3. Receive Maker diff (file path + proposed content only — not full repo)
+4. Invoke Checker sub-agent with: SKILL.md + Maker diff only
+5. If Checker returns FAIL → update STATE.md, skip to step 8
+6. Apply Maker changes to disk (within allowlist only)
+7. Run: python3 verify_docs.py → capture exit code + stderr
+8. Run: python3 verify_e2e.py → capture exit code + stderr
+9. If both exit 0 → write STATE.md status=success, stop (success)
+10. If either fails → compress verifier output to failing paths + messages only
+11. Update STATE.md: increment iteration, store failing_files_hash
+12. Check stop rules → continue or escalate
+```
+
+---
+
+## 6. Context Hygiene
+
+To control token costs (loops consume ~4x tokens vs. single-turn chat):
+
+- Pass verifier output to agents as **compressed signal only**: failing file paths + specific error messages. Do not pass full file contents unless the agent explicitly needs to read a specific file.
+- Load SKILL.md as a **stable prefix** — it never changes mid-run, enabling prompt caching.
+- STATE.md contains the dynamic context; SKILL.md contains the static policy.
+- Maker receives only its target file list, not the entire repository.
+- Checker receives only the Maker's diff, not the full file.
+
+---
+
+## 7. Stop Rules
+
+The orchestrator enforces all three stop conditions. They are not optional.
+
+| Condition | Threshold | Action |
+|---|---|---|
+| Success | `verify_e2e.py` exits 0 | Write STATE.md status=success, stop |
+| Max iterations | 3 iterations | Write ESCALATION.md, stop |
+| No progress | Same `failing_files_hash` as prior iteration | Write ESCALATION.md, stop |
+| Blocklist write attempt | Any | Write ESCALATION.md, stop immediately |
+
+### Escalation Content (agent/logs/ESCALATION.md)
+Must include:
+- Timestamp
+- Iteration count reached
+- Failing files list
+- Last verifier stderr output (compressed)
+- Stop reason (max_iterations | no_progress | blocklist_violation)
+
+---
+
+## 8. The Stop Authority Rule
+
+> **The agent is never allowed to declare success based on its own opinion.**
+
+Success is defined exclusively by `verify_e2e.py` exiting with code 0. The Checker sub-agent's PASS output advances to the verifier step — it does not stop the loop. Only the deterministic Python scripts hold stop authority.

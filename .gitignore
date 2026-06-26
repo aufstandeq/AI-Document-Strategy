@@ -2,3 +2,9 @@
 architecture/.DS_Store
 architecture/.DS_Store
 architecture/.DS_Store
+
+# Agent loop — ephemeral run state and logs
+agent/STATE.md
+agent/logs/*.md
+agent/logs/*.txt
+agent/logs/*.log

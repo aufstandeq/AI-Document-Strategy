@@ -27,7 +27,7 @@ WORKSPACE_ROOT = Path(__file__).parent.resolve()
 
 EXCLUDE_DIR_PARTS = {
     ".git", ".github", "__pycache__",
-    "archive", "TEMP",
+    "archive", "TEMP", "Reference",
 }
 
 # Directories whose files are excluded from orphan checking
@@ -40,6 +40,8 @@ ORPHAN_ALLOWLIST = {
     "glossary.md",
     "how-to-start.md",
     "onboarding-dev.md",
+    "STATE.md",      # ephemeral runtime file — gitignored, not a doc
+    "CLAUDE.md",     # session entry point — not linked from within the repo
 }
 
 VIEW_FILES = {
@@ -176,8 +178,8 @@ def check_arch_gap_owners(all_files: list[Path]) -> list[str]:
 def check_glossary_links(all_files: list[Path]) -> list[str]:
     """Every active document (outside system-template) must link to glossary.md."""
     errors = []
-    # Root-level glossary files are themselves exempt
-    exempt_names = {"glossary.md", "README.md"}
+    # Root-level and runtime files exempt from glossary link requirement
+    exempt_names = {"glossary.md", "README.md", "STATE.md", "CLAUDE.md"}
     for f in all_files:
         rel_parts = f.relative_to(WORKSPACE_ROOT).parts
         if "system-template" in rel_parts:
@@ -296,6 +298,10 @@ def run_audit(warn_only: bool = False) -> bool:
 
 
 if __name__ == "__main__":
+    if "--workspace" in sys.argv:
+        idx = sys.argv.index("--workspace")
+        if idx + 1 < len(sys.argv):
+            WORKSPACE_ROOT = Path(sys.argv[idx + 1]).resolve()
     warn_only = "--warn-only" in sys.argv
     passed = run_audit(warn_only=warn_only)
     sys.exit(0 if passed else 1)

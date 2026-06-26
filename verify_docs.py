@@ -218,7 +218,13 @@ def check_entity_alignment(file_path: Path, content: str) -> list:
     return errors
 
 def main():
-    exclude_dirs = {".git", ".github", ".agents", "archive/legacy-artifacts", "architecture/systems/system-template/components"}
+    global WORKSPACE_ROOT
+    if "--workspace" in sys.argv:
+        idx = sys.argv.index("--workspace")
+        if idx + 1 < len(sys.argv):
+            WORKSPACE_ROOT = Path(sys.argv[idx + 1]).resolve()
+
+    exclude_dirs = {".git", ".github", ".agents", "TEMP", "Reference", "archive/legacy-artifacts", "architecture/systems/system-template/components"}
     gitignore_patterns = load_gitignore()
     markdown_files = []
     
@@ -244,7 +250,7 @@ def main():
             # Case-insensitive checks for MD extensions
             if file.lower().endswith((".md", ".markdown", ".mdown")):
                 # Skip temporary files
-                if file.startswith("~") or file.startswith(".") or file in {"ORIGINAL_REQUEST.md", "TEST_READY.md"}:
+                if file.startswith("~") or file.startswith(".") or file in {"ORIGINAL_REQUEST.md", "TEST_READY.md", "STATE.md"}:
                     continue
                 markdown_files.append(Path(root) / file)
 
