@@ -15,6 +15,7 @@ Checks:
   6. `description` includes trigger context by using `Use when`.
   7. Individual skill folders do not contain `README.md`.
   8. Parent-level README.md and PLAN.md are allowed.
+  9. Parent-level support directories such as tests/ are allowed but are not treated as skills.
 
 Exit codes:
   0 — all checks passed
@@ -33,6 +34,7 @@ from pathlib import Path
 WORKSPACE_ROOT = Path(__file__).parent.resolve()
 SKILLS_DIR = WORKSPACE_ROOT / ".claude" / "skills"
 PARENT_ALLOWED_FILES = {"README.md", "PLAN.md"}
+PARENT_ALLOWED_DIRS = {"tests"}
 REQUIRED_FRONTMATTER_FIELDS = {"name", "description"}
 KEBAB_CASE_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
@@ -121,9 +123,12 @@ def main() -> int:
 
     errors: list[str] = []
     skill_dirs: list[Path] = []
+    support_dirs: list[Path] = []
 
     for path in sorted(SKILLS_DIR.iterdir()):
-        if path.is_dir():
+        if path.is_dir() and path.name in PARENT_ALLOWED_DIRS:
+            support_dirs.append(path)
+        elif path.is_dir():
             skill_dirs.append(path)
         elif path.is_file() and path.name not in PARENT_ALLOWED_FILES:
             errors.append(
@@ -139,6 +144,7 @@ def main() -> int:
     print("verify_claude_skills.py — Claude Skills Validation")
     print(f"Workspace: {WORKSPACE_ROOT}")
     print(f"Skills scanned: {len(skill_dirs)}")
+    print(f"Support dirs scanned: {len(support_dirs)}")
     print("=" * 70)
 
     if errors:
