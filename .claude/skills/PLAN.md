@@ -1,0 +1,252 @@
+# Claude Skills Operating Plan
+
+## Purpose
+
+This plan defines the end state for the Claude skill system in the AI-Document-Strategy repository.
+
+The goal is to create a controlled documentation operating model where Claude can:
+
+- Understand repository rules.
+- Prepare the documentation loop.
+- Review failures before mutation.
+- Apply bounded repairs.
+- Use scaffold scripts instead of hand-created structures.
+- Stop when human source facts are missing.
+- Preserve the architecture repository as the source of truth.
+
+This file is a planning and visibility artifact for the skill system. It is not active architecture documentation.
+
+## Target End State
+
+```text
+Human request
+  ↓
+Claude skill trigger
+  ↓
+Repository policy load
+  ↓
+Harness / verifier state read
+  ↓
+Checker / repair planning
+  ↓
+Bounded mutation or escalation
+  ↓
+Deterministic verification
+  ↓
+Human-visible result
+```
+
+The success authority remains the repository verifier and harness layer.
+
+## Operating Principles
+
+| Principle | Meaning |
+|---|---|
+| Observe before mutate | Inspect harness state and policy before editing. |
+| Policy before skill | `agent/SKILL.md` overrides individual Claude skills. |
+| Scaffold before hand-create | ADRs and systems use repository scaffold scripts. |
+| Source facts before content | Architecture content requires explicit source material. |
+| Repair plan before repair | Checker produces the plan before mutation. |
+| Escalate instead of invent | Missing facts become owned gaps, questions, assumptions, or risks. |
+| Deterministic verification wins | Success is valid only after repository checks pass. |
+
+## Current Skill Set
+
+| Skill | Mutation | Purpose |
+|---|---:|---|
+| `doc-loop-prepare` | No | Prepare the documentation loop and classify the next safe action. |
+| `run-doc-checker` | No | Review verifier failures or proposed diffs and produce a repair plan. |
+| `fix-doc-linter-failures` | Yes, bounded | Execute safe verifier/linter repairs inside policy. |
+| `create-adr` | Yes, scaffold only | Create ADRs through `scaffold_adr.py`. |
+| `create-system-scaffold` | Yes, scaffold only | Create system folders through `scaffold_system.py`. |
+| `create-system-context` | Yes, bounded | Update C4 context documents from explicit source facts. |
+| `escalate-doc-gap` | Yes, bounded | Record missing human-owned facts instead of inventing content. |
+
+## Current Validation Gates
+
+| Gate | Command | Scope | Hard gate? |
+|---|---|---|---:|
+| Claude skills validation | `python3 verify_claude_skills.py` | `.claude/skills/**` structure, naming, and frontmatter | Yes |
+| Structural architecture validation | `python3 verify_docs.py` | Active architecture Markdown document structure and links | Yes |
+| Cross-repository audit | `python3 verify_e2e.py` | Orphans, glossary links, ARCH-GAP owners, ADR sequence, system references | Yes |
+| Coverage report | `python3 verify_coverage.py` | Gap inventory, status distribution, stale docs, system inventory | No |
+
+The CI workflow runs skill validation before architecture-document validation. This keeps `.claude/skills/**` tracked and verified without forcing skill files into the architecture-document contract.
+
+## Core Workflow
+
+### 1. Prepare
+
+Use `doc-loop-prepare` to run:
+
+```bash
+python3 agent_harness.py --prepare
+```
+
+Read:
+
+```text
+agent/STATE.md
+agent/SKILL.md
+agent/GOAL.md
+```
+
+### 2. Check and Plan
+
+Use `run-doc-checker` to inspect failures or proposed diffs and produce a repair plan.
+
+Statuses:
+
+```text
+SAFE_TO_REPAIR
+REQUIRES_SOURCE_FACTS
+BLOCKED_POLICY
+HUMAN_REVIEW_REQUIRED
+NO_REPAIR_NEEDED
+```
+
+### 3. Repair
+
+Use `fix-doc-linter-failures` only for safe repairs identified by the checker.
+
+Allowed repairs include metadata fixes, obvious relative-link fixes, glossary links, owned ARCH-GAP comments, and approved `PENDING_DISCOVERY` blocks.
+
+### 4. Escalate
+
+Use `escalate-doc-gap` when a missing fact requires human input or source material.
+
+## Creation Workflows
+
+### ADR Creation
+
+Use `create-adr` with:
+
+```bash
+python3 scaffold_adr.py "decision-title"
+```
+
+Do not hand-create ADR files or manually select ADR numbers.
+
+### System / Bounded Context Creation
+
+Use `create-system-scaffold` with:
+
+```bash
+python3 scaffold_system.py <system-name>
+python3 scaffold_system.py <system-name> --title "Human-Readable Title"
+```
+
+Do not hand-create system folders.
+
+### System Context Update
+
+Use `create-system-context` for the linked context set:
+
+```text
+architecture/context/business-context.md
+architecture/context/system-context.md
+architecture/context/actors-and-roles.md
+architecture/context/external-systems.md
+```
+
+Build a source-fact inventory before editing.
+
+## Skill System Structure
+
+```text
+.claude/
+  skills/
+    README.md
+    PLAN.md
+    doc-loop-prepare/SKILL.md
+    run-doc-checker/SKILL.md
+    fix-doc-linter-failures/SKILL.md
+    create-adr/SKILL.md
+    create-system-scaffold/SKILL.md
+    create-system-context/SKILL.md
+    escalate-doc-gap/SKILL.md
+```
+
+Rules:
+
+- Skill folder names use kebab-case.
+- Each skill folder contains required `SKILL.md`.
+- `SKILL.md` frontmatter includes `name` and `description`.
+- Frontmatter `name` matches the folder name.
+- Description includes trigger context using `Use when`.
+- Parent-level `README.md` and `PLAN.md` are allowed.
+- Individual skill folders do not contain README files.
+
+## Repository Control Files
+
+These files define repository behavior and require human review when changed:
+
+```text
+agent/SKILL.md
+agent/GOAL.md
+agent_harness.py
+verify_docs.py
+verify_e2e.py
+verify_coverage.py
+verify_claude_skills.py
+scaffold_adr.py
+scaffold_system.py
+agent/prompts/
+.github/
+README.md
+how-to-start.md
+onboarding-dev.md
+```
+
+## Audit Boundary
+
+`.claude/skills/**` is tracked runtime configuration.
+
+Current state:
+
+- `.claude/` is excluded directly in `verify_docs.py`.
+- `.claude/` is excluded directly in `verify_e2e.py`.
+- `.claude/skills/**` is validated by `verify_claude_skills.py`.
+- `.claude/` is not in `.gitignore`.
+
+Future state:
+
+- Add a dedicated `.doc-audit-ignore` or equivalent file.
+- Move non-architecture Markdown exclusions into that file.
+- Keep Git tracking and architecture-audit scope separate.
+
+Tracked as issue #2.
+
+## Completion Criteria for This PR
+
+The current PR is complete when:
+
+- Seven core skills are present.
+- Parent skills index exists.
+- Operating plan exists.
+- Claude skills verifier exists.
+- CI runs the Claude skills verifier before architecture audits.
+- `.claude/` remains tracked by Git.
+- Architecture audits ignore `.claude/` as non-architecture Markdown.
+- GitHub Actions passes.
+- PR body explains the operating model clearly.
+
+## Future Backlog
+
+| Item | Purpose |
+|---|---|
+| Skill trigger tests | Verify each skill's description triggers for intended requests and does not over-trigger. |
+| Example task transcripts | Add concise examples showing the intended skill sequence. |
+| Repair-plan fixture | Provide sample verifier failures and expected `run-doc-checker` repair plan output. |
+| Skill verifier fixtures | Add positive and negative fixture cases for `verify_claude_skills.py`. |
+| `.doc-audit-ignore` | Decouple audit scope from Git tracking and hardcoded verifier exclusions. |
+| Source-fact citation pattern | Standardize how source facts are cited in repair plans. |
+| Skill retirement policy | Define how outdated skills are deprecated without deleting history. |
+
+## Working Rule
+
+```text
+observe → plan → ask/escalate → repair → verify
+```
+
+Do not skip directly from request to mutation when repository policy, source facts, or verifier state are unknown.

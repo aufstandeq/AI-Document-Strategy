@@ -10,7 +10,7 @@ Define the unambiguous, machine-readable objective for each agent loop run. The 
 Architecture Team
 
 ## Last Updated
-2026-06-25
+2026-07-02
 
 ---
 
@@ -20,20 +20,26 @@ See [Glossary](../glossary.md) for definitions of key terms used in this documen
 
 ## 1. Primary Success Condition
 
-A loop run is successful if and only if **both** of the following exit with code 0:
+A loop run is successful if and only if the deterministic harness reports success:
 
+```bash
+python3 agent_harness.py --prepare
 ```
+
+The harness reports success only when **both** verifier scripts exit with code 0:
+
+```bash
 python3 verify_docs.py
 python3 verify_e2e.py
 ```
 
-No other signal — agent opinion, Checker PASS, or human review — constitutes success. The exit codes are the sole stop authority.
+No other signal — agent opinion, Checker PASS, or human review — constitutes success. The harness exit code is the sole stop authority.
 
 ---
 
-## 2. Default Run Scope
+## 2. Current Run Scope
 
-When triggered without an explicit scope argument, the loop targets all active documentation directories:
+The current harness targets all active documentation directories:
 
 ```
 architecture/
@@ -47,16 +53,18 @@ The `agent/`, `archive/`, and `.github/` directories are excluded from agent wri
 
 ---
 
-## 3. Scoped Run (Optional)
+## 3. Scoped Run Status
 
-The orchestrator accepts a `--scope <path>` argument to target a subset of the repository. Examples:
+Scoped runs are not currently implemented in `agent_harness.py`.
+
+Do not document or invoke unsupported commands such as:
 
 ```bash
-python3 run_agent_loop.py --trigger manual --scope architecture/context/
-python3 run_agent_loop.py --trigger manual --scope decisions/
+python3 agent_harness.py --scope architecture/context/
+python3 agent_harness.py --trigger manual --scope decisions/
 ```
 
-A scoped run is still considered successful only when the global verifier scripts pass — fixing one directory must not break another.
+Until scoped execution is implemented in the harness, all loop runs should be treated as full-repository verification runs.
 
 ---
 
@@ -93,8 +101,8 @@ The following are out of scope for the agent loop. The loop must not attempt to 
 
 ## 6. Trigger Modes
 
-| Trigger | When Used | Scope Default |
+| Trigger | Current Status | Scope Default |
 |---|---|---|
-| `cron` | Nightly scheduled run | Full repository |
-| `pr` | Pull request opened against main | Files changed in the PR |
-| `manual` | Human-initiated run | Specified via `--scope` or full repo |
+| `manual` | Supported by running `python3 agent_harness.py --prepare` | Full repository |
+| `cron` | Planned external scheduler trigger | Full repository |
+| `pr` | Planned external CI trigger | Full repository until scoped support exists |
