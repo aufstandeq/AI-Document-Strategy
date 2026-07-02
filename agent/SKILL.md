@@ -65,6 +65,7 @@ agent_harness.py
 verify_docs.py
 verify_e2e.py
 verify_coverage.py
+verify_claude_skills.py
 scaffold_adr.py
 scaffold_system.py
 .github/
@@ -118,82 +119,3 @@ Never use bare `TBD`. All incomplete sections must use:
 <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
 TBD
 ```
-
-### 4.4 Architectural Gap Tags
-When a section is known to be incomplete and the answer is not yet available:
-
-```markdown
-<!-- ARCH-GAP: [Short description of what is unknown]. [Owner: TeamName]. -->
-```
-
-The `Owner:` field is required. Gaps without an owner fail `verify_e2e.py`.
-
-### 4.5 Link Rules
-- All cross-document links must use relative paths (e.g., `../glossary.md`)
-- Absolute paths (`/architecture/...`) fail the linter
-- Every active document must contain at least one link to `glossary.md`
-
-### 4.6 Scaffold Scripts
-- New ADRs: call `python3 scaffold_adr.py "<title>"` — never create ADR files by hand
-- New systems: call `python3 scaffold_system.py <name>` — never copy system-template manually
-
----
-
-## 5. Mandatory Tool Sequence
-
-The loop must execute steps in this exact order each iteration:
-
-```
-1. Run: python3 agent_harness.py --prepare
-2. Read agent/STATE.md → load iteration context and compressed verifier failure summary
-3. Invoke Supervisor agent with: SKILL.md + STATE.md + verifier failure summary
-4. Supervisor delegates to specialized SA, SWA, and SR sub-agents and consolidates proposed changes
-5. Invoke Checker sub-agent with: SKILL.md + Supervisor's consolidated diff only
-6. If Checker returns FAIL → do not apply changes; run python3 agent_harness.py --prepare again only after revising the proposal
-7. Apply Supervisor/Specialist changes to disk (within allowlist only)
-8. Run: python3 agent_harness.py --prepare
-9. If harness exits 2 → success; stop
-10. If harness exits 1 → escalated; stop and read agent/logs/ESCALATION.md
-11. If harness exits 0 → failures remain; continue only if stop rules allow another iteration
-```
-
----
-
-## 6. Context Hygiene
-
-To control token costs (loops consume ~4x tokens vs. single-turn chat):
-
-- Pass verifier output to agents as **compressed signal only**: failing file paths + specific error messages. Do not pass full file contents unless the agent explicitly needs to read a specific file.
-- Load SKILL.md as a **stable prefix** — it never changes mid-run, enabling prompt caching.
-- STATE.md contains the dynamic context; SKILL.md contains the static policy.
-- Supervisor and specialists receive only their target file lists or failure context, not the entire repository.
-- Checker receives only the Supervisor's consolidated diff, not the full file.
-
----
-
-## 7. Stop Rules
-
-The orchestrator enforces all three stop conditions. They are not optional.
-
-| Condition | Threshold | Action |
-|---|---|---|
-| Success | `agent_harness.py --prepare` exits 2 | Write STATE.md status=success, stop |
-| Max iterations | 3 iterations | Write ESCALATION.md, stop |
-| No progress | Same `failing_files_hash` as prior iteration | Write ESCALATION.md, stop |
-| Blocklist write attempt | Any | Write ESCALATION.md, stop immediately |
-
-### Escalation Content (agent/logs/ESCALATION.md)
-Must include:
-- Timestamp
-- Iteration count reached
-- Failing files list
-- Last verifier stderr output (compressed)
-- Stop reason (max_iterations | no_progress | blocklist_violation)
-
----
-
-## 8. The Stop Authority Rule
-
-> **The agent is never allowed to declare success based on its own opinion.**
-
-Success is defined exclusively by `agent_harness.py --prepare` exiting 2 after both deterministic verifier scripts pass. The Checker sub-agent's PASS output advances to the verifier step — it does not stop the loop. Only the deterministic Python harness holds stop authority.
