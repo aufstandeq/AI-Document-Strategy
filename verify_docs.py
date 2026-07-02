@@ -224,7 +224,7 @@ def main():
         if idx + 1 < len(sys.argv):
             WORKSPACE_ROOT = Path(sys.argv[idx + 1]).resolve()
 
-    exclude_dirs = {".git", ".github", ".agents", "TEMP", "Reference", "archive/legacy-artifacts", "architecture/systems/system-template/components"}
+    exclude_dirs = {".git", ".github", ".agents", ".claude", "TEMP", "Reference", "archive/legacy-artifacts", "architecture/systems/system-template/components"}
     gitignore_patterns = load_gitignore()
     markdown_files = []
     
