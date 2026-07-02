@@ -43,6 +43,9 @@ All files related to the agentic system live inside the `agent/` folder:
     *   [security_reviewer_prompt.md](./prompts/security_reviewer_prompt.md): Security Reviewer prompt.
     *   [maker_system_prompt.md](./prompts/maker_system_prompt.md): Generic Maker (legacy) prompt.
     *   [checker_system_prompt.md](./prompts/checker_system_prompt.md): Checker prompt.
+*   **[docs/](./docs/claude-skills-specification.md):** Agent framework documentation.
+    *   [claude-skills-specification.md](./docs/claude-skills-specification.md): Native custom skills layout and syntax.
+    *   [The-Complete-Guide-to-Building-Skill-for-Claude.pdf](./docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf): Anthropic's PDF guide to building skills.
 *   **logs/:** Escalation logs (written on loop failure).
 
 ---

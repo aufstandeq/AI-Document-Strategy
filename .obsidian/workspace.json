@@ -4,21 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "7c45891c6c57920f",
+        "id": "cf6a861024808483",
         "type": "tabs",
         "children": [
           {
-            "id": "f2596459fe5fb4a5",
+            "id": "d329dd2ac746f35f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "onboarding-dev.md",
+                "file": "agent/SKILL.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "onboarding-dev"
+              "title": "SKILL"
             }
           }
         ]
@@ -83,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 307.08160400390625
   },
   "right": {
     "id": "e8a48a609d8030ae",
@@ -188,36 +188,38 @@
       "bases:Create new base": false
     }
   },
-  "active": "f2596459fe5fb4a5",
+  "active": "959f6f4a96a9c604",
   "lastOpenFiles": [
+    "agent/docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+    "skill_guide.pdf",
+    "agent/prompts/solutions_architect_prompt.md",
+    "agent/SKILL.md",
+    "standards/architectural-decision-matrix.md",
+    "agent/docs/claude-skills-specification.md",
+    "agent/docs",
+    "how-to-start.md",
     "README.md",
+    "onboarding-dev.md",
     "agent/decisions/0003-agentic-team-collaboration.md",
     "agent/decisions/0002-agentic-loop-architecture.md",
     "agent/prompts/supervisor_prompt.md",
-    "agent/prompts/solutions_architect_prompt.md",
     "agent/prompts/software_architect_prompt.md",
     "agent/prompts/security_reviewer_prompt.md",
     "agent/prompts/maker_system_prompt.md",
     "agent/prompts/checker_system_prompt.md",
     "agent/GOAL.md",
     "agent/README.md",
-    "agent/SKILL.md",
     "agent/STATE.md",
     "architecture/index.md",
     "archive/Architecture Repository Bootstrap Instructions.pdf",
     "archive/README.md",
     "decisions/0001-record-architecture-decisions.md",
     "glossary.md",
-    "how-to-start.md",
-    "onboarding-dev.md",
     "initialize_project.py",
     "agent/decisions",
     "CLAUDE.md",
-    "standards/architectural-decision-matrix.md",
     "standards/architecture-guidelines.md",
     "governance/risks.md",
-    "governance/red-team-audit-report.md",
-    "governance/open-questions.md",
-    "governance/migration_log.md"
+    "governance/red-team-audit-report.md"
   ]
 }
