@@ -21,7 +21,7 @@ See [Glossary](../glossary.md) for definitions of key terms used in this documen
 ## 1. Role Definitions
 
 ### Orchestrator
-The Python process (`run_agent_loop.py`) that manages the full loop lifecycle. It reads and writes STATE.md, spawns sub-agents, invokes verifier scripts, and enforces all stop rules. It does not write documentation directly.
+The Python process (`agent_harness.py`) that manages deterministic loop state. It reads and writes `agent/STATE.md`, invokes verifier scripts, compresses verifier output, enforces stop rules, and emits the Supervisor brief. It does not call LLM APIs and does not write documentation directly.
 
 ### Supervisor (Director Agent)
 Coordinates the specialized Maker sub-agents. Analyzes verifier failures in STATE.md, delegates files and tasks to the appropriate specialized architects, checks that they stay within their write allowlists, and consolidates their proposals. System prompt: [supervisor_prompt.md](./prompts/supervisor_prompt.md).
@@ -61,12 +61,12 @@ agent/logs/                    (orchestrator only)
 Writes to any of the following paths fail the loop immediately and trigger escalation. These files define the harness — an agent modifying them is reward-hacking.
 
 ```
+agent_harness.py
 verify_docs.py
 verify_e2e.py
 verify_coverage.py
 scaffold_adr.py
 scaffold_system.py
-run_agent_loop.py
 .github/
 agent/SKILL.md
 agent/GOAL.md
@@ -141,21 +141,20 @@ The `Owner:` field is required. Gaps without an owner fail `verify_e2e.py`.
 
 ## 5. Mandatory Tool Sequence
 
-The orchestrator must execute steps in this exact order each iteration:
+The loop must execute steps in this exact order each iteration:
 
 ```
-1. Read agent/STATE.md → load iteration context
-2. Invoke Supervisor agent with: SKILL.md + STATE.md + verifier failure summary
-3. Supervisor delegates to specialized SA, SWA, and SR sub-agents and consolidates proposed changes
-4. Invoke Checker sub-agent with: SKILL.md + Supervisor's consolidated diff only
-5. If Checker returns FAIL → update STATE.md, skip to step 8
-6. Apply Supervisor/Specialist changes to disk (within allowlist only)
-7. Run: python3 verify_docs.py → capture exit code + stderr
-8. Run: python3 verify_e2e.py → capture exit code + stderr
-9. If both exit 0 → write STATE.md status=success, stop (success)
-10. If either fails → compress verifier output to failing paths + messages only
-11. Update STATE.md: increment iteration, store failing_files_hash
-12. Check stop rules → continue or escalate
+1. Run: python3 agent_harness.py --prepare
+2. Read agent/STATE.md → load iteration context and compressed verifier failure summary
+3. Invoke Supervisor agent with: SKILL.md + STATE.md + verifier failure summary
+4. Supervisor delegates to specialized SA, SWA, and SR sub-agents and consolidates proposed changes
+5. Invoke Checker sub-agent with: SKILL.md + Supervisor's consolidated diff only
+6. If Checker returns FAIL → do not apply changes; run python3 agent_harness.py --prepare again only after revising the proposal
+7. Apply Supervisor/Specialist changes to disk (within allowlist only)
+8. Run: python3 agent_harness.py --prepare
+9. If harness exits 2 → success; stop
+10. If harness exits 1 → escalated; stop and read agent/logs/ESCALATION.md
+11. If harness exits 0 → failures remain; continue only if stop rules allow another iteration
 ```
 
 ---
@@ -178,7 +177,7 @@ The orchestrator enforces all three stop conditions. They are not optional.
 
 | Condition | Threshold | Action |
 |---|---|---|
-| Success | `verify_e2e.py` exits 0 | Write STATE.md status=success, stop |
+| Success | `agent_harness.py --prepare` exits 2 | Write STATE.md status=success, stop |
 | Max iterations | 3 iterations | Write ESCALATION.md, stop |
 | No progress | Same `failing_files_hash` as prior iteration | Write ESCALATION.md, stop |
 | Blocklist write attempt | Any | Write ESCALATION.md, stop immediately |
@@ -197,4 +196,4 @@ Must include:
 
 > **The agent is never allowed to declare success based on its own opinion.**
 
-Success is defined exclusively by `verify_e2e.py` exiting with code 0. The Checker sub-agent's PASS output advances to the verifier step — it does not stop the loop. Only the deterministic Python scripts hold stop authority.
+Success is defined exclusively by `agent_harness.py --prepare` exiting 2 after both deterministic verifier scripts pass. The Checker sub-agent's PASS output advances to the verifier step — it does not stop the loop. Only the deterministic Python harness holds stop authority.
