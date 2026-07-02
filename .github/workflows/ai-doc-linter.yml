@@ -19,6 +19,9 @@ jobs:
       with:
         python-version: '3.x'
 
+    - name: Claude skills validation (hard gate)
+      run: python3 verify_claude_skills.py
+
     - name: Structural validation (hard gate)
       run: python3 verify_docs.py
 
