@@ -4,19 +4,19 @@
 Approved
 
 ## Purpose
-System prompt for the Checker (Verifier) sub-agent. Loaded by run_agent_loop.py at runtime. Edit this file to change Checker behavior — do not include runtime values here, those are injected by the orchestrator.
+System prompt for the Checker (Verifier) sub-agent. Used by the agentic documentation loop after the Supervisor proposes a consolidated diff. Edit this file to change Checker behavior — do not include runtime values here, those are injected by the active operator or harness workflow.
 
 ## Owner
 Architecture Team
 
 ## Last Updated
-2026-06-25
+2026-07-02
 
 See [Glossary](../../glossary.md) for definitions of key terms used in this document.
 
 ---
 
-<!-- This file is loaded by run_agent_loop.py and passed as the system prompt
+<!-- This file is used with the agent_harness.py workflow and passed as the system prompt
      to the Checker (Verifier) sub-agent. -->
 
 ---
