@@ -1,0 +1,152 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Machine-readable fixture cases for expected Claude skill activation behavior.",
+  "status_values": [
+    "SHOULD_TRIGGER",
+    "SHOULD_NOT_TRIGGER",
+    "AMBIGUOUS_ASK_CLARIFYING_QUESTION"
+  ],
+  "selection_rule": "When a request could trigger both a planning skill and a mutation skill, prefer the planning skill unless the user explicitly refers to an existing approved repair plan.",
+  "cases": [
+    {
+      "id": "core-prepare-001",
+      "user_request": "Run the documentation loop and tell me what needs to happen next.",
+      "expected_skill": "doc-loop-prepare",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request asks for loop preparation and next-action classification."
+    },
+    {
+      "id": "core-prepare-002",
+      "user_request": "Check the repo state before we make any documentation edits.",
+      "expected_skill": "doc-loop-prepare",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request is observe-before-mutate."
+    },
+    {
+      "id": "core-checker-001",
+      "user_request": "Fix whatever the architecture linter is complaining about.",
+      "expected_skill": "run-doc-checker",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The safe first step is repair planning, not mutation."
+    },
+    {
+      "id": "core-checker-002",
+      "user_request": "Review these proposed doc changes before applying them.",
+      "expected_skill": "run-doc-checker",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request asks for diff review."
+    },
+    {
+      "id": "core-repair-001",
+      "user_request": "Apply the safe linter fixes from the repair plan.",
+      "expected_skill": "fix-doc-linter-failures",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request references an existing repair plan and asks for bounded mutation."
+    },
+    {
+      "id": "core-repair-002",
+      "user_request": "Repair missing headers and broken links only.",
+      "expected_skill": "fix-doc-linter-failures",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request asks for bounded verifier/linter repair."
+    },
+    {
+      "id": "core-escalate-001",
+      "user_request": "Fill in all the unknown architecture details so the docs pass.",
+      "expected_skill": "escalate-doc-gap",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "Unknown facts must be escalated, not invented."
+    },
+    {
+      "id": "core-escalate-002",
+      "user_request": "Add an open question for the missing integration owner.",
+      "expected_skill": "escalate-doc-gap",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request asks to record a missing human-owned fact."
+    },
+    {
+      "id": "create-adr-001",
+      "user_request": "Create an ADR for choosing Postgres as the primary database.",
+      "expected_skill": "create-adr",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "ADR creation must use scaffold_adr.py."
+    },
+    {
+      "id": "create-adr-002",
+      "user_request": "Add a new decision record named API Gateway Boundary.",
+      "expected_skill": "create-adr",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "Decision record creation maps to ADR scaffolding."
+    },
+    {
+      "id": "create-system-001",
+      "user_request": "Scaffold a Payments bounded context.",
+      "expected_skill": "create-system-scaffold",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "System or bounded-context folder creation must use scaffold_system.py."
+    },
+    {
+      "id": "create-system-002",
+      "user_request": "Add a Customer Identity system folder but leave it as draft.",
+      "expected_skill": "create-system-scaffold",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request asks for scaffold-only system creation."
+    },
+    {
+      "id": "context-001",
+      "user_request": "Rebuild the C4 system context from these notes.",
+      "expected_skill": "create-system-context",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request targets coordinated C4/context documents."
+    },
+    {
+      "id": "context-002",
+      "user_request": "Update actors and external systems from the supplied source notes.",
+      "expected_skill": "create-system-context",
+      "status": "SHOULD_TRIGGER",
+      "rationale": "The request targets the context quartet and source-fact extraction."
+    },
+    {
+      "id": "negative-concept-001",
+      "user_request": "What is C4 architecture?",
+      "expected_skill": "create-system-context",
+      "status": "SHOULD_NOT_TRIGGER",
+      "rationale": "This is a learning question, not a repo mutation task."
+    },
+    {
+      "id": "negative-concept-002",
+      "user_request": "Explain what an ADR is.",
+      "expected_skill": "create-adr",
+      "status": "SHOULD_NOT_TRIGGER",
+      "rationale": "This is conceptual explanation, not ADR creation."
+    },
+    {
+      "id": "negative-writing-001",
+      "user_request": "Rewrite this paragraph to be clearer.",
+      "expected_skill": "fix-doc-linter-failures",
+      "status": "SHOULD_NOT_TRIGGER",
+      "rationale": "Generic writing is not a verifier or linter repair."
+    },
+    {
+      "id": "negative-inspection-001",
+      "user_request": "Show me the current skills in the repo.",
+      "expected_skill": "doc-loop-prepare",
+      "status": "SHOULD_NOT_TRIGGER",
+      "rationale": "This is navigation or inspection, not loop preparation."
+    },
+    {
+      "id": "negative-invention-001",
+      "user_request": "Create a production deployment architecture from best practices.",
+      "expected_skill": "create-system-context",
+      "status": "SHOULD_NOT_TRIGGER",
+      "rationale": "Architecture must not be generated from general model knowledge."
+    },
+    {
+      "id": "ambiguous-system-001",
+      "user_request": "Add a system using whatever name makes sense.",
+      "expected_skill": "create-system-scaffold",
+      "status": "AMBIGUOUS_ASK_CLARIFYING_QUESTION",
+      "rationale": "The system boundary or name is missing."
+    }
+  ]
+}
