@@ -14,7 +14,7 @@ This repository is the authoritative architecture source of truth for the system
 TBD
 
 ## Last Updated
-2026-06-11
+2026-07-02
 
 ## Audience
 * Product
@@ -42,15 +42,14 @@ TBD
 * [standards/](./standards/technical-standards.md): Engineering, coding, testing, and quality attribute standards.
   * [quality-attributes.md](./standards/quality-attributes.md): Non-functional requirement targets.
   * [architectural-decision-matrix.md](./standards/architectural-decision-matrix.md): Topology selection framework.
+  * [architecture-guidelines.md](./standards/architecture-guidelines.md): Solution and software design principles.
+  * [learning-backlog.md](./standards/learning-backlog.md): Architecture reference books and learning backlog.
 * [governance/](./governance/open-questions.md): Risk logs, assumption trackers, and open questions.
   * [risks.md](./governance/risks.md): Risk register.
   * [assumptions.md](./governance/assumptions.md): Documented assumptions.
   * [migration_log.md](./governance/migration_log.md): Change and migration history.
   * [red-team-audit-report.md](./governance/red-team-audit-report.md): Documentation linter audit findings.
-* [agent/](./agent/SKILL.md): Agentic loop machinery — orchestrator policy, goal definition, and sub-agent prompts.
-  * [SKILL.md](./agent/SKILL.md): Agent policy document (write allowlist, rules, stop conditions).
-  * [GOAL.md](./agent/GOAL.md): Machine-readable loop success criteria.
-  * [prompts/](./agent/prompts/maker_system_prompt.md): Versioned Maker and Checker sub-agent system prompts.
+* [agent/](./agent/README.md): Agentic loop documentation, prompts, and policy files (for autonomous documentation maintenance).
 * [archive/](./archive/README.md): Retrospective, superseded, or legacy architectural artifacts.
 
 ## Operational Guide
@@ -94,24 +93,7 @@ To verify structural rules locally before pushing changes to GitHub:
 python3 verify_docs.py
 ```
 
-### 6. Running the Agentic Loop
-The documentation loop runs within Claude Code — no external API key required. Claude Code acts as Orchestrator, Maker, and Checker. The Python harness manages state and runs the verifiers.
-
-```bash
-# Start a fresh loop run
-python3 agent_harness.py --reset
-python3 agent_harness.py --prepare
-
-# Check where a loop left off
-python3 agent_harness.py --status
-```
-
-`agent_harness.py --prepare` exits with:
-- `2` — success (both verifiers passed)
-- `1` — escalated (written to `agent/logs/ESCALATION.md`)
-- `0` — continue (Claude should read the brief and act as Maker)
-
-Claude Code reads [`CLAUDE.md`](./CLAUDE.md) at session start for full loop operating instructions. Policy lives in [agent/SKILL.md](./agent/SKILL.md). Success criteria in [agent/GOAL.md](./agent/GOAL.md). See [ADR-0002](./decisions/0002-agentic-loop-architecture.md) for the architectural decision.
+<!-- Note: Instructions for running the autonomous agentic loop have been isolated to agent/README.md -->
 
 ### 5. Marking Architectural Gaps
 

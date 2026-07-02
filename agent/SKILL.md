@@ -10,7 +10,7 @@ Define the governing rules for all agents operating within the agentic documenta
 Architecture Team
 
 ## Last Updated
-2026-06-25
+2026-07-02
 
 ---
 
@@ -23,11 +23,16 @@ See [Glossary](../glossary.md) for definitions of key terms used in this documen
 ### Orchestrator
 The Python process (`run_agent_loop.py`) that manages the full loop lifecycle. It reads and writes STATE.md, spawns sub-agents, invokes verifier scripts, and enforces all stop rules. It does not write documentation directly.
 
-### Maker (Implementer Sub-Agent)
-Explores the repository, identifies incomplete or incorrect documentation, and drafts updates. Operates within the write allowlist only. Calls scaffold scripts rather than creating files directly. System prompt: [maker_system_prompt.md](./prompts/maker_system_prompt.md).
+### Supervisor (Director Agent)
+Coordinates the specialized Maker sub-agents. Analyzes verifier failures in STATE.md, delegates files and tasks to the appropriate specialized architects, checks that they stay within their write allowlists, and consolidates their proposals. System prompt: [supervisor_prompt.md](./prompts/supervisor_prompt.md).
+
+### Specialized Makers (Implementer Sub-Agents)
+- **Solutions Architect:** Focuses on business context, actors, integrations, and decisions. Write allowlist: `architecture/context/`, `decisions/`. System prompt: [solutions_architect_prompt.md](./prompts/solutions_architect_prompt.md).
+- **Software Architect:** Focuses on system views, quality attributes, and codebase technical standards. Write allowlist: `architecture/views/`, `standards/`. System prompt: [software_architect_prompt.md](./prompts/software_architect_prompt.md).
+- **Security Reviewer:** Focuses on risk modeling, assumptions, and security standards. Write allowlist: `governance/risks.md`, `governance/assumptions.md`. System prompt: [security_reviewer_prompt.md](./prompts/security_reviewer_prompt.md).
 
 ### Checker (Verifier Sub-Agent)
-Reviews the Maker's proposed changes against this SKILL.md and the repository conventions. Does not modify files — outputs a structured review with PASS or FAIL and specific issues. Runs before the deterministic verifier scripts. System prompt: [checker_system_prompt.md](./prompts/checker_system_prompt.md).
+Reviews the Supervisor's final merged changes against this SKILL.md and the repository conventions. Does not modify files — outputs a structured review with PASS or FAIL and specific issues. Runs before the deterministic verifier scripts. System prompt: [checker_system_prompt.md](./prompts/checker_system_prompt.md).
 
 ---
 
@@ -76,7 +81,7 @@ standards/
 
 ## 4. Documentation Rules
 
-Every markdown file the Maker creates or modifies must satisfy all of the following:
+Every markdown file the agentic team creates or modifies must satisfy all of the following:
 
 ### 4.1 Required Header Block
 Every file must open with this exact structure:
@@ -140,11 +145,11 @@ The orchestrator must execute steps in this exact order each iteration:
 
 ```
 1. Read agent/STATE.md → load iteration context
-2. Invoke Maker sub-agent with: SKILL.md + STATE.md + target file list
-3. Receive Maker diff (file path + proposed content only — not full repo)
-4. Invoke Checker sub-agent with: SKILL.md + Maker diff only
+2. Invoke Supervisor agent with: SKILL.md + STATE.md + verifier failure summary
+3. Supervisor delegates to specialized SA, SWA, and SR sub-agents and consolidates proposed changes
+4. Invoke Checker sub-agent with: SKILL.md + Supervisor's consolidated diff only
 5. If Checker returns FAIL → update STATE.md, skip to step 8
-6. Apply Maker changes to disk (within allowlist only)
+6. Apply Supervisor/Specialist changes to disk (within allowlist only)
 7. Run: python3 verify_docs.py → capture exit code + stderr
 8. Run: python3 verify_e2e.py → capture exit code + stderr
 9. If both exit 0 → write STATE.md status=success, stop (success)
@@ -162,8 +167,8 @@ To control token costs (loops consume ~4x tokens vs. single-turn chat):
 - Pass verifier output to agents as **compressed signal only**: failing file paths + specific error messages. Do not pass full file contents unless the agent explicitly needs to read a specific file.
 - Load SKILL.md as a **stable prefix** — it never changes mid-run, enabling prompt caching.
 - STATE.md contains the dynamic context; SKILL.md contains the static policy.
-- Maker receives only its target file list, not the entire repository.
-- Checker receives only the Maker's diff, not the full file.
+- Supervisor and specialists receive only their target file lists or failure context, not the entire repository.
+- Checker receives only the Supervisor's consolidated diff, not the full file.
 
 ---
 

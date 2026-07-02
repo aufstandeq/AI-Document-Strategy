@@ -1,7 +1,7 @@
 # ADR-0002: Agentic Loop Architecture
 
 ## Document Status
-Draft
+Approved
 
 ## Purpose
 Record the architectural decision regarding agentic loop architecture.
@@ -10,17 +10,17 @@ Record the architectural decision regarding agentic loop architecture.
 Architecture Team
 
 ## Last Updated
-2026-06-25
+2026-07-02
 
 ---
 
-See [Glossary](../glossary.md) for definitions of key terms.
+See [Glossary](../../glossary.md) for definitions of key terms.
 
 ---
 
 ## Status
 
-Proposed
+Approved
 
 ## Context
 
@@ -66,13 +66,13 @@ The existing harness (`verify_*.py`, `scaffold_*.py`, `.github/`) is not modifie
 
 ## Related Decisions
 
-- [ADR-0001: Record Architecture Decisions](./0001-record-architecture-decisions.md) — establishes the ADR pattern this record follows
+- [ADR-0001: Record Architecture Decisions](../../decisions/0001-record-architecture-decisions.md) — establishes the ADR pattern this record follows
 
 ## References
 
 - Osmani, A. and Steinberger, P. — Loop Engineering (June 2026)
 - Hashimoto, M. — Harness Engineering (February 2026)
 - ReAct pattern — Reasoning and Acting in language models
-- [CLAUDE.md](../CLAUDE.md) — in-session and cowork agent operating instructions
-- [agent/SKILL.md](../agent/SKILL.md) — governing policy for the loop
-- [agent/GOAL.md](../agent/GOAL.md) — success criteria definition
+- [CLAUDE.md](../../CLAUDE.md) — in-session and cowork agent operating instructions
+- [agent/SKILL.md](../SKILL.md) — governing policy for the loop
+- [agent/GOAL.md](../GOAL.md) — success criteria definition

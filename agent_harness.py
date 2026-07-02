@@ -254,8 +254,10 @@ def cmd_prepare() -> int:
     # Continue — write brief for Claude
     brief = (
         f"Iteration {iteration}/{MAX_ITERATIONS}. "
-        f"Failures remain. Act as Maker: fix the issues below, "
-        f"then call `python3 agent_harness.py --prepare` again.\n\n"
+        f"Failures remain. Act as Supervisor: coordinate your team of specialized architects "
+        f"(Solutions Architect, Software Architect, Security Reviewer) to resolve the issues below. "
+        f"Consolidate their changes and present the final merged diff array. "
+        f"Then run `python3 agent_harness.py --prepare` again.\n\n"
         f"{summary}"
     )
     state["status"] = "running"
@@ -263,7 +265,7 @@ def cmd_prepare() -> int:
 
     print(f"\n📋 Brief written to agent/STATE.md")
     print(f"\nVerifier failures to fix:\n{summary}\n")
-    print("→ Claude: act as Maker, fix the issues above, then run --prepare again.")
+    print("→ Claude: act as Supervisor, coordinate the team to fix the issues, then run --prepare again.")
     return 0
 
 
