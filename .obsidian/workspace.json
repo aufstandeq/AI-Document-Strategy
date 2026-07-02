@@ -11,14 +11,12 @@
             "id": "d329dd2ac746f35f",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "pdf",
               "state": {
-                "file": "agent/SKILL.md",
-                "mode": "source",
-                "source": false
+                "file": "agent/docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf"
               },
-              "icon": "lucide-file",
-              "title": "SKILL"
+              "icon": "lucide-file-text",
+              "title": "The-Complete-Guide-to-Building-Skill-for-Claude"
             }
           }
         ]
@@ -188,14 +186,14 @@
       "bases:Create new base": false
     }
   },
-  "active": "959f6f4a96a9c604",
+  "active": "d329dd2ac746f35f",
   "lastOpenFiles": [
+    "agent/docs/claude-skills-specification.md",
     "agent/docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
+    "agent/SKILL.md",
     "skill_guide.pdf",
     "agent/prompts/solutions_architect_prompt.md",
-    "agent/SKILL.md",
     "standards/architectural-decision-matrix.md",
-    "agent/docs/claude-skills-specification.md",
     "agent/docs",
     "how-to-start.md",
     "README.md",
