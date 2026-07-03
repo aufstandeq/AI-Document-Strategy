@@ -1,7 +1,7 @@
 # System Context
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
 This document establishes the system boundary, scope, high-level responsibilities, and external dependencies of the Distributed Payment Reconciliation Subsystem.
@@ -10,7 +10,15 @@ This document establishes the system boundary, scope, high-level responsibilitie
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+---
+
+## Example Content Notice
+
+This document currently contains example architecture content for a Distributed Payment Reconciliation Subsystem. It is retained as a worked example and must not be treated as approved source-truth architecture for a real implementation until replaced with project-specific source facts and explicitly re-approved.
+
+---
 
 ## System Purpose
 The Distributed Payment Reconciliation Subsystem acts as an automated audit layer. It continuously fetches transaction logs from external payment providers (Stripe, PayPal) and compares them against internal Billing Ledger logs to ensure financial consistency, catch double-billing, detect missing cash deposits, and log exceptions.
