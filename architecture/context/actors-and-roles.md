@@ -1,7 +1,7 @@
 # Actors and Roles
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
 This document defines the actors, their operational responsibilities, role mappings, and security scopes within the Distributed Payment Reconciliation Subsystem.
@@ -10,7 +10,15 @@ This document defines the actors, their operational responsibilities, role mappi
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+---
+
+## Example Content Notice
+
+This document currently contains example architecture content for a Distributed Payment Reconciliation Subsystem. It is retained as a worked example and must not be treated as approved source-truth architecture for a real implementation until replaced with project-specific source facts and explicitly re-approved.
+
+---
 
 ## Actors
 - **Reconciliation Analyst (Finance):** Business users who monitor daily reconciliation outcomes, investigate exceptions, and resolve transaction mismatches.
