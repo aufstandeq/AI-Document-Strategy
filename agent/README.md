@@ -97,8 +97,14 @@ Key files:
 
 * **[SKILL.md](./SKILL.md):** Governing policy: allowlists, blocklists, and documentation rules.
 * **[GOAL.md](./GOAL.md):** Success criteria definition.
-* **[decisions/](./decisions/0002-agentic-loop-architecture.md):** Architecture decisions for the agentic loop.
-* **[prompts/](./prompts/supervisor_prompt.md):** Reference prompt-agent architecture.
+* **[ADR-0002](./decisions/0002-agentic-loop-architecture.md):** Agentic loop architecture decision.
+* **[ADR-0003](./decisions/0003-agentic-team-collaboration.md):** Multi-agent team collaboration decision.
+* **[supervisor_prompt.md](./prompts/supervisor_prompt.md):** Reference Supervisor prompt.
+* **[solutions_architect_prompt.md](./prompts/solutions_architect_prompt.md):** Reference Solutions Architect prompt.
+* **[software_architect_prompt.md](./prompts/software_architect_prompt.md):** Reference Software Architect prompt.
+* **[security_reviewer_prompt.md](./prompts/security_reviewer_prompt.md):** Reference Security Reviewer prompt.
+* **[checker_system_prompt.md](./prompts/checker_system_prompt.md):** Reference Checker prompt.
+* **[maker_system_prompt.md](./prompts/maker_system_prompt.md):** Legacy generic Maker prompt retained for reference.
 * **[docs/](./docs/claude-skills-specification.md):** Agent framework documentation.
 
 ---
