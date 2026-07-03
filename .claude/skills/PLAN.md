@@ -70,6 +70,8 @@ The success authority remains the repository verifier and harness layer.
 | Skill trigger fixture validation | `python3 verify_skill_trigger_fixtures.py` | Machine-readable skill trigger expectations | Yes |
 | Repair-plan fixture validation | `python3 verify_repair_plan_fixtures.py` | Machine-readable checker repair-plan expectations | Yes |
 | Skill verifier fixture validation | `python3 verify_skill_verifier_fixtures.py` | Positive and negative cases for the skill validator | Yes |
+| Source-fact citation fixture validation | `python3 verify_source_fact_citation_fixtures.py` | Source-fact, inference, gap, policy, and verifier-output citation rules | Yes |
+| Skill retirement fixture validation | `python3 verify_skill_retirement_fixtures.py` | Skill lifecycle and retirement behavior rules | Yes |
 | Structural architecture validation | `python3 verify_docs.py` | Active architecture Markdown document structure and links | Yes |
 | Cross-repository audit | `python3 verify_e2e.py` | Orphans, glossary links, ARCH-GAP owners, ADR sequence, system references | Yes |
 | Coverage report | `python3 verify_coverage.py` | Gap inventory, status distribution, stale docs, system inventory | No |
@@ -175,6 +177,10 @@ Build a source-fact inventory before editing.
       repair-plan-fixture.md
       repair-plan-fixture.json
       skill-verifier-fixtures.json
+      source-fact-citation-pattern.md
+      source-fact-citation-pattern.json
+      skill-retirement-policy.md
+      skill-retirement-policy.json
 ```
 
 Rules:
@@ -204,6 +210,8 @@ verify_claude_skills.py
 verify_skill_trigger_fixtures.py
 verify_repair_plan_fixtures.py
 verify_skill_verifier_fixtures.py
+verify_source_fact_citation_fixtures.py
+verify_skill_retirement_fixtures.py
 scaffold_adr.py
 scaffold_system.py
 agent/prompts/
@@ -234,13 +242,15 @@ Current state:
 | Repair-plan fixture | Human-readable and machine-readable repair-plan fixtures added. |
 | Skill verifier fixtures | Positive and negative skill-validator fixtures added. |
 | `.doc-audit-ignore` | Audit scope is now separated from Git tracking. |
+| Source-fact citation pattern | Citation rules distinguish source facts, verifier output, policy, inference, and gaps. |
+| Skill retirement policy | Skill lifecycle rules define active, deprecated, superseded, archived, and removed states. |
 
 ## Future Backlog
 
 | Item | Purpose |
 |---|---|
-| Source-fact citation pattern | Standardize how source facts are cited in repair plans. |
-| Skill retirement policy | Define how outdated skills are deprecated without deleting history. |
+| Actual fixture execution harness | Create temporary skill trees and verify `verify_claude_skills.py` behavior against positive and negative fixtures. |
+| Local developer command wrapper | Add a single command for running all validation gates locally. |
 
 ## Working Rule
 
