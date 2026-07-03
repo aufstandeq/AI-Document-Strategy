@@ -1,0 +1,27 @@
+# Documentation audit ignore file
+#
+# Purpose:
+# Keep Git tracking separate from architecture-document audit scope.
+# Paths listed here are still tracked by Git unless also listed in .gitignore.
+#
+# Pattern rules:
+# - Blank lines and lines starting with # are ignored.
+# - A trailing slash marks a directory or path prefix.
+# - A path containing / is matched as a repository-relative prefix.
+# - A bare name is matched against any path segment or filename.
+
+.git/
+.github/
+.agents/
+.claude/
+__pycache__/
+archive/
+TEMP/
+Reference/
+architecture/systems/system-template/components/
+system-template/
+
+# Generated or transient documentation state files
+ORIGINAL_REQUEST.md
+TEST_READY.md
+STATE.md
