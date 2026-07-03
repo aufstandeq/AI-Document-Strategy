@@ -2,27 +2,9 @@
 """
 verify_claude_skills.py — Validate project-scoped Claude skill structure.
 
-This verifier checks `.claude/skills/**` as runtime skill configuration.
-It is intentionally separate from architecture-document validation because skill files
-are tracked repository assets, but they are not active architecture documentation.
-
-Checks:
-  1. Skill folders use kebab-case names.
-  2. Each skill folder contains required `SKILL.md`.
-  3. `SKILL.md` contains YAML-style frontmatter bounded by `---`.
-  4. Frontmatter includes required `name` and `description` fields.
-  5. Frontmatter `name` matches the folder name.
-  6. `description` includes trigger context by using `Use when`.
-  7. Individual skill folders do not contain `README.md`.
-  8. Parent-level README.md and PLAN.md are allowed.
-  9. Parent-level support directories such as tests/ are allowed but are not treated as skills.
-
-Exit codes:
-  0 — all checks passed
-  1 — one or more hard failures found
-
 Usage:
   python3 verify_claude_skills.py
+  python3 verify_claude_skills.py --workspace /tmp/fixture-workspace
 """
 
 from __future__ import annotations
@@ -39,8 +21,18 @@ REQUIRED_FRONTMATTER_FIELDS = {"name", "description"}
 KEBAB_CASE_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
 
 
+def configure_workspace_from_args() -> None:
+    global WORKSPACE_ROOT, SKILLS_DIR
+    if "--workspace" in sys.argv:
+        index = sys.argv.index("--workspace")
+        if index + 1 >= len(sys.argv):
+            print("❌ --workspace requires a path")
+            sys.exit(1)
+        WORKSPACE_ROOT = Path(sys.argv[index + 1]).resolve()
+        SKILLS_DIR = WORKSPACE_ROOT / ".claude" / "skills"
+
+
 def parse_frontmatter(content: str) -> tuple[dict[str, str], list[str]]:
-    """Parse the simple top-level key/value frontmatter fields used by skills."""
     errors: list[str] = []
     if not content.startswith("---\n"):
         return {}, ["SKILL.md must start with YAML frontmatter delimiter '---'"]
@@ -117,6 +109,8 @@ def validate_skill_folder(skill_dir: Path) -> list[str]:
 
 
 def main() -> int:
+    configure_workspace_from_args()
+
     if not SKILLS_DIR.exists():
         print(f"❌ Missing skills directory: {SKILLS_DIR.relative_to(WORKSPACE_ROOT)}")
         return 1
