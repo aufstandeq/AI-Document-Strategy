@@ -19,30 +19,5 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Claude skills validation (hard gate)
-      run: python3 verify_claude_skills.py
-
-    - name: Skill trigger fixtures validation (hard gate)
-      run: python3 verify_skill_trigger_fixtures.py
-
-    - name: Repair plan fixtures validation (hard gate)
-      run: python3 verify_repair_plan_fixtures.py
-
-    - name: Skill verifier fixtures validation (hard gate)
-      run: python3 verify_skill_verifier_fixtures.py
-
-    - name: Source fact citation fixtures validation (hard gate)
-      run: python3 verify_source_fact_citation_fixtures.py
-
-    - name: Skill retirement fixtures validation (hard gate)
-      run: python3 verify_skill_retirement_fixtures.py
-
-    - name: Structural validation (hard gate)
-      run: python3 verify_docs.py
-
-    - name: Cross-repository audit (hard gate)
-      run: python3 verify_e2e.py
-
-    - name: Coverage report (informational)
-      run: python3 verify_coverage.py
-      continue-on-error: true
+    - name: Repository validation
+      run: python3 run_validation.py
