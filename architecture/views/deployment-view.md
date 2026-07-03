@@ -1,83 +1,75 @@
 # Deployment View
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
-This document specifies the deployment architecture, physical/virtual nodes, network zoning, and database isolation levels for the Distributed Payment Reconciliation Subsystem.
+Define where the target system runs, how its runtime parts are arranged, and what environment assumptions matter for implementation.
 
 ## Owner
-Architecture Team
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+---
 
 ## Environments
-- **Local Development:** Run via Docker Compose, mimicking the schema-per-module database layout locally and utilizing mock API endpoints.
-- **Production:** A single active container instance deployed inside a secured virtual private cloud (VPC) subnet, backed by a managed database instance.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document the environments used for the system.
 
-## Infrastructure
-- **Compute Host:** A single container task (e.g., AWS ECS Fargate or a standalone Docker container on EC2) running the Modular Monolith runtime.
-- **Relational Database:** A managed PostgreSQL instance (e.g., AWS RDS) hosting the isolated schemas.
+| Environment | Purpose | Notes |
+|---|---|---|
+| <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL --> TBD | TBD | TBD |
 
-## Network Zones
-- **Public Zone (Internet):** Houses the external payment gateways (Stripe/PayPal). Direct ingress from the internet is restricted to secure webhook endpoints via an Application Load Balancer.
-- **Private Subnet (Application Zone):** Houses the single compute container host. All database connections and internal Billing Ledger sync operations are routed entirely within this private network.
-- **Secure Subnet (Database Zone):** Houses the managed PostgreSQL instance. Direct ingress is restricted solely to the application container security group on port 5432.
+## Infrastructure Elements
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document the main infrastructure elements that support the system.
+
+| Element | Purpose | Notes |
+|---|---|---|
+| <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL --> TBD | TBD | TBD |
 
 ## Runtime Components
-- **Subsystem Container:** A single OS container enclosing the Fetcher, Matcher, and Report services. The container is configured via environment variables.
-- **PostgreSQL Database Instance:** A single host running a database cluster containing three distinct logical schemas (`extraction_schema`, `matching_schema`, `ledger_schema`) to isolate module data.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document the runtime components and where they execute.
+
+| Runtime Component | Location | Responsibility |
+|---|---|---|
+| <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL --> TBD | TBD | TBD |
+
+## Environment Boundaries
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document important boundaries between users, applications, data stores, and external dependencies.
+
+| Boundary | Description | Notes |
+|---|---|---|
+| <!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL --> TBD | TBD | TBD |
 
 ## Scaling Considerations
-- **Vertical Scaling:** The primary method of scaling is vertical (allocating more CPU/RAM to the container instance) given that reconciliation runs are typically executed in batch sequences.
-- **Locking & Concurrency:** Horizontal scaling is restricted because matching jobs require sequential write locks on the matching tables. Running a single scheduler container prevents race conditions and duplicate ledger postings.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document expected scaling model, capacity assumptions, and known constraints.
+
+## Deployment Diagram
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Replace this placeholder with a deployment diagram showing runtime components and environment boundaries.
 
 ```mermaid
 flowchart TD
-    subgraph Internet [Internet - Public Zone]
-        stripe[Stripe Gateways]
-        paypal[PayPal Gateways]
-    end
+    user[User]
+    app[Application Runtime]
+    data[(Data Store)]
+    dependency[External Dependency]
 
-    subgraph CorporateVPC [Corporate VPC]
-        subgraph PublicSubnet [Public Subnet - Demilitarized Zone]
-            alb[Application Load Balancer]
-        end
-
-        subgraph PrivateSubnet [Private Subnet - Application Zone]
-            subgraph AppNode [Single Compute Instance Host]
-                container[Reconciliation Monolith Container]
-            end
-            billing[Internal Billing Ledger API]
-        end
-
-        subgraph DatabaseSubnet [Private Subnet - Database Zone]
-            subgraph RDSInstance [PostgreSQL DB Instance]
-                schema_ex[(extraction_schema)]
-                schema_mt[(matching_schema)]
-                schema_ld[(ledger_schema)]
-            end
-        end
-    end
-
-    %% Routing webhooks
-    stripe -->|HTTPS webhook payload| alb
-    paypal -->|HTTPS webhook payload| alb
-    alb -->|Proxy webhook traffic| container
-
-    %% Outbound API requests
-    container -->|Fetch transaction history| stripe
-    container -->|Fetch transaction history| paypal
-
-    %% Database connections
-    container -->|Isolation credentials: read/write| schema_ex
-    container -->|Isolation credentials: read/write| schema_mt
-    container -->|Isolation credentials: read/write| schema_ld
-
-    %% Internal Sync
-    container -->|REST POST sync report| billing
+    user --> app
+    app --> data
+    app --> dependency
 ```
+
+## Architecture Clarity Notes
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document deployment assumptions that affect development decisions.
 
 ---
 
