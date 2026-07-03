@@ -1,7 +1,7 @@
 # External Systems
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
 This document details the external integrations and internal systems that interact with the Distributed Payment Reconciliation Subsystem, including their communication directions and ownership.
@@ -10,7 +10,15 @@ This document details the external integrations and internal systems that intera
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+---
+
+## Example Content Notice
+
+This document currently contains example architecture content for a Distributed Payment Reconciliation Subsystem. It is retained as a worked example and must not be treated as approved source-truth architecture for a real implementation until replaced with project-specific source facts and explicitly re-approved.
+
+---
 
 ## Upstream Systems
 - **Stripe API:** Provides transaction details, payout reports, dispute records, and webhooks for credit card and automated payments.
