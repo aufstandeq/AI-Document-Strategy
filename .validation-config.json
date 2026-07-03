@@ -1,0 +1,62 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Shared validation configuration for local and CI repository checks.",
+  "audit_ignore_file": ".doc-audit-ignore",
+  "skill_root": ".claude/skills",
+  "validation_gates": [
+    {
+      "id": "claude-skills",
+      "name": "Claude skills validation",
+      "command": ["python3", "verify_claude_skills.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "skill-trigger-fixtures",
+      "name": "Skill trigger fixtures validation",
+      "command": ["python3", "verify_skill_trigger_fixtures.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "repair-plan-fixtures",
+      "name": "Repair plan fixtures validation",
+      "command": ["python3", "verify_repair_plan_fixtures.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "skill-verifier-fixtures",
+      "name": "Skill verifier fixtures validation",
+      "command": ["python3", "verify_skill_verifier_fixtures.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "source-fact-citation-fixtures",
+      "name": "Source fact citation fixtures validation",
+      "command": ["python3", "verify_source_fact_citation_fixtures.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "skill-retirement-fixtures",
+      "name": "Skill retirement fixtures validation",
+      "command": ["python3", "verify_skill_retirement_fixtures.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "structural-docs",
+      "name": "Structural architecture validation",
+      "command": ["python3", "verify_docs.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "cross-repository-audit",
+      "name": "Cross-repository audit",
+      "command": ["python3", "verify_e2e.py"],
+      "hard_gate": true
+    },
+    {
+      "id": "coverage-report",
+      "name": "Coverage report",
+      "command": ["python3", "verify_coverage.py"],
+      "hard_gate": false
+    }
+  ]
+}
