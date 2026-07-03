@@ -14,7 +14,7 @@ Architecture Team
 
 ---
 
-See [Glossary](./glossary.md) for definitions of key terms used in this document.
+See the [Agent Tooling Glossary](./agent/glossary.md) for AI documentation-system terms and the [Project Glossary](./glossary.md) for target-system vocabulary.
 
 ---
 
@@ -179,7 +179,7 @@ To apply this strategy elsewhere:
 | Agent execution model reconciliation | Clearly label current skills-based operation versus future prompt-agent design. |
 | Semantic drift detection | Compare documentation claims against implementation, deployment, or runtime sources. |
 | Scheduled maintenance cadence | Run the loop periodically and file escalations for stale or incomplete documents. |
-| Glossary expansion | Make `glossary.md` a true vocabulary authority rather than only a required link target. |
+| Project glossary expansion | Make the root `glossary.md` a true project vocabulary authority for the target system. |
 
 ## 13. Success Definition
 
