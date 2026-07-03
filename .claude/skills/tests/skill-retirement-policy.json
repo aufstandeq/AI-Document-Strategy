@@ -1,0 +1,78 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Machine-readable rules for Claude skill retirement and deprecation behavior.",
+  "retirement_states": [
+    "ACTIVE",
+    "DEPRECATED",
+    "SUPERSEDED",
+    "ARCHIVED",
+    "REMOVED"
+  ],
+  "states_requiring_retirement_block": [
+    "DEPRECATED",
+    "SUPERSEDED",
+    "ARCHIVED"
+  ],
+  "states_requiring_human_approval": [
+    "REMOVED"
+  ],
+  "required_retirement_fields": [
+    "Status",
+    "Effective Date",
+    "Replaced By",
+    "Reason",
+    "Approved By"
+  ],
+  "required_update_targets": [
+    ".claude/skills/README.md",
+    ".claude/skills/PLAN.md",
+    ".claude/skills/tests/trigger-cases.json"
+  ],
+  "cases": [
+    {
+      "id": "retirement-active-001",
+      "description": "Active skill has no retirement block and remains selectable.",
+      "state": "ACTIVE",
+      "requires_retirement_block": false,
+      "requires_replacement": false,
+      "requires_human_approval": false,
+      "may_be_selected_for_new_work": true
+    },
+    {
+      "id": "retirement-deprecated-001",
+      "description": "Deprecated skill remains in place but should not be selected for new work.",
+      "state": "DEPRECATED",
+      "requires_retirement_block": true,
+      "requires_replacement": false,
+      "requires_human_approval": false,
+      "may_be_selected_for_new_work": false
+    },
+    {
+      "id": "retirement-superseded-001",
+      "description": "Superseded skill requires a replacement skill name.",
+      "state": "SUPERSEDED",
+      "requires_retirement_block": true,
+      "requires_replacement": true,
+      "requires_human_approval": false,
+      "may_be_selected_for_new_work": false
+    },
+    {
+      "id": "retirement-archived-001",
+      "description": "Archived skill is retained for history and excluded from active selection.",
+      "state": "ARCHIVED",
+      "requires_retirement_block": true,
+      "requires_replacement": false,
+      "requires_human_approval": false,
+      "may_be_selected_for_new_work": false
+    },
+    {
+      "id": "retirement-removed-001",
+      "description": "Removed skill requires explicit human approval and fixture cleanup.",
+      "state": "REMOVED",
+      "requires_retirement_block": false,
+      "requires_replacement": false,
+      "requires_human_approval": true,
+      "may_be_selected_for_new_work": false
+    }
+  ]
+}
