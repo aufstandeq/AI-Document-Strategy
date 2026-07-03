@@ -1,7 +1,7 @@
 # Business Context
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
 This document outlines the business context, goals, stakeholders, metrics, constraints, and risks for the Distributed Payment Reconciliation Subsystem.
@@ -10,7 +10,15 @@ This document outlines the business context, goals, stakeholders, metrics, const
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+---
+
+## Example Content Notice
+
+This document currently contains example architecture content for a Distributed Payment Reconciliation Subsystem. It is retained as a worked example and must not be treated as approved source-truth architecture for a real implementation until replaced with project-specific source facts and explicitly re-approved.
+
+---
 
 ## Business Objectives
 The primary objective of the Distributed Payment Reconciliation Subsystem is to automatically reconcile customer payment transactions received via external payment gateways (Stripe and PayPal) against the internal Billing Ledger. The subsystem aims to:
