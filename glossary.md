@@ -1,10 +1,10 @@
-# Glossary
+# Project Glossary
 
 ## Document Status
 Draft
 
 ## Purpose
-Define the authoritative vocabulary used across the repository.
+Define the authoritative project, product, domain, architecture, design, and code vocabulary used to build and maintain the target system.
 
 ## Owner
 Architecture Team
@@ -13,44 +13,33 @@ Architecture Team
 2026-07-02
 
 ## Usage Rule
-Terms should be defined here before broad usage elsewhere. Other documents should reference the glossary rather than redefine terms.
 
-When a new architecture, governance, validation, or agent-operation term is introduced, update this glossary in the same change set.
+This glossary is for the system being designed and built.
+
+Use this glossary to define terms that developers, architects, product owners, security reviewers, and AI assistants need when creating or maintaining architecture, design, and code artifacts for the target project.
+
+AI-tooling and documentation-harness vocabulary belongs in the [Agent Tooling Glossary](./agent/glossary.md), not here.
+
+## Scope
+
+Include terms such as:
+
+- domain concepts;
+- business capabilities;
+- actors and roles;
+- system names;
+- bounded contexts;
+- modules;
+- APIs and events;
+- data entities;
+- quality attributes;
+- project-specific architecture patterns;
+- implementation vocabulary that must be used consistently in code and documentation.
+
+Do not use this file for AI process terms, validator internals, fixture names, or agent policy terms unless those terms are also part of the target system's architecture vocabulary.
 
 ## Terms
 
 | Term | Definition | Notes |
 |---|---|---|
-| Active Documentation | Documentation inside the active audit boundary that is treated as current repository knowledge. | Excludes archived, ignored, generated, or explicitly reference-only material. |
-| Agentic Documentation Loop | The controlled process in which AI assistance observes repository state, plans bounded changes, escalates missing facts, repairs safe issues, and verifies results. | Current implementation uses Claude skills plus deterministic validators. |
-| Architecture Decision Record (ADR) | A dated, sequential document that records an architectural decision, its context, and its consequences. | ADR files live in `decisions/` and must preserve numeric sequence. |
-| ARCH-GAP | A machine-auditable inline marker for a known unresolved architecture gap. | Must include an owner using `Owner:` so the gap can be assigned. |
-| Audit Boundary | The set of files included in repository validation and cross-document checks. | Controlled by active paths and `.doc-audit-ignore`. |
-| Bounded Repair | A safe, limited change that fixes structural or explicitly supported issues without inventing missing facts. | Examples: fixing links, headers, status values, glossary references, or scaffold shape. |
-| Checker | A review role that evaluates proposed changes against policy and validation expectations without modifying files. | In the current repo, deterministic verifier scripts provide the strongest checker authority. |
-| CI Validation | Validation performed by GitHub Actions after push or pull request events. | Strategic target is to use `python3 run_validation.py`. |
-| Control File | A file that defines policy, validation behavior, scaffolding, CI, or agent operation. | Control files are protected from normal agent mutation. |
-| Deterministic Verifier | A script that produces repeatable pass/fail results from repository contents. | Examples include `verify_docs.py`, `verify_e2e.py`, and fixture validators. |
-| Documentation as Code | Treating documentation as versioned repository content with review, validation, and repeatable workflows. | Core repository principle. |
-| Drift Detection | A future capability that compares documentation claims against source-of-truth systems such as code, infrastructure, APIs, or runtime state. | Current validation mostly verifies structure, not semantic truth. |
-| Example Content | Worked sample content retained to demonstrate documentation shape or patterns. | Must not be treated as approved source-truth architecture until replaced and re-approved. |
-| Fixture | A controlled test case used to verify expected behavior of skills, validators, or repair plans. | May be human-readable, machine-readable, or executable. |
-| Glossary First Vocabulary | The rule that important domain, architecture, and operation terms should be defined in the glossary before broad usage. | Prevents inconsistent terminology across documents. |
-| Hard Gate | A validation gate that must pass for the repository to be considered valid. | Failure returns a non-zero result through `run_validation.py`. |
-| Informational Gate | A validation gate that reports findings but does not fail the overall validation run. | `coverage-report` is currently informational. |
-| Local Validation | Validation run by a developer or agent in a local workspace. | Current preferred command is `python3 run_validation.py`. |
-| No-Invention Discipline | The rule that AI must not fabricate actors, requirements, integrations, decisions, or source facts. | Missing information must become an owned gap, question, assumption, or escalation. |
-| Operating Model | The defined division of labor, workflow, policy, and verification process used to create and maintain documentation. | Captured in `strategy.md` and agent documentation. |
-| Orphan | A Markdown file inside the audit boundary with no inbound relative link from another active Markdown file. | Detected by `verify_e2e.py`. |
-| PENDING_DISCOVERY | A standard placeholder marker for information that is intentionally unknown and must not be autofilled by AI. | Used with `<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->`. |
-| Reference Design | Documentation retained to describe a possible or future implementation approach, not necessarily the current runtime. | `agent/prompts/` is currently reference/future design unless explicitly wired. |
-| Reward-Hacking | A failure mode where an agent modifies validators, policies, or success definitions to make itself appear successful. | Prevented by protecting control files. |
-| Scaffold | A script or template-generated structure that creates documents in a repeatable approved shape. | Examples include ADR and system scaffolds. |
-| Semantic Drift | The condition where documentation remains structurally valid but no longer reflects the implemented or deployed system. | Not fully solved by current validators. |
-| Source Fact | A fact grounded in human input, source documents, code, infrastructure, runtime data, or other authoritative evidence. | AI may organize source facts but must not invent them. |
-| Source Truth | The authoritative body of facts a document is allowed to reflect. | Active architecture docs should distinguish source truth from example content. |
-| Strategy-as-Deliverable | The reusable documentation strategy captured separately from the working repo instance. | Captured in `strategy.md`. |
-| Validation Gate | A configured check executed by the shared validation runner. | Defined in `.validation-config.json`. |
-| Validation Runner | The script that loads validation configuration and executes gates in order. | Current runner is `run_validation.py`. |
-| Write Allowlist | The set of paths a role or agent may modify. | Defined in `agent/SKILL.md`. |
-| Write Blocklist | The protected set of paths that normal agents must not modify. | Includes harness, policy, CI, verifier, and scaffold files. |
+| Project Glossary | The controlled vocabulary for the target system being designed and built. | Add project-specific terms here before they are used broadly across architecture, design, and code documents. |
