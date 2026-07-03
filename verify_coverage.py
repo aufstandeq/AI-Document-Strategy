@@ -3,19 +3,6 @@
 verify_coverage.py — Architectural coverage and gap inventory tool.
 
 Informational management view — does NOT fail CI (exits 0 always).
-Run this during sprint reviews or on-demand to understand repo health.
-
-Reports:
-  1. ARCH-GAP tag inventory by owner, across all active documents
-  2. Document status distribution
-  3. Stale 'Last Updated' dates (> STALE_THRESHOLD_DAYS)
-  4. System/bounded-context folder inventory (on-disk vs. known list)
-
-Usage:
-  python3 verify_coverage.py
-  python3 verify_coverage.py --gaps-only
-  python3 verify_coverage.py --stale-only
-  python3 verify_coverage.py --systems-only
 """
 
 import datetime
@@ -24,24 +11,17 @@ import sys
 from pathlib import Path
 from collections import defaultdict
 
+from audit_ignore import is_audit_ignored, load_audit_ignore_patterns
+
 WORKSPACE_ROOT = Path(__file__).parent.resolve()
 STALE_THRESHOLD_DAYS = 30
 
-EXCLUDE_DIR_PARTS = {
-    ".git", ".github", "__pycache__",
-    "archive", "TEMP", "system-template",
-}
-
-
-# ---------------------------------------------------------------------------
-# File collection
-# ---------------------------------------------------------------------------
 
 def collect_markdown_files() -> list[Path]:
+    patterns = load_audit_ignore_patterns(WORKSPACE_ROOT)
     files = []
     for path in sorted(WORKSPACE_ROOT.rglob("*.md")):
-        rel_parts = path.relative_to(WORKSPACE_ROOT).parts
-        if any(part in EXCLUDE_DIR_PARTS for part in rel_parts):
+        if is_audit_ignored(path, WORKSPACE_ROOT, patterns):
             continue
         if path.name.startswith(("~", ".")):
             continue
@@ -49,21 +29,13 @@ def collect_markdown_files() -> list[Path]:
     return files
 
 
-# ---------------------------------------------------------------------------
-# ARCH-GAP extraction
-# ---------------------------------------------------------------------------
-
 def strip_code_blocks(content: str) -> str:
-    """Remove fenced code blocks and inline code so examples don't trigger checks."""
-    # Remove fenced code blocks (``` ... ```)
     content = re.sub(r'```.*?```', '', content, flags=re.DOTALL)
-    # Remove inline code (`...`)
     content = re.sub(r'`[^`\n]+`', '', content)
     return content
 
 
 def extract_arch_gaps(file_path: Path) -> list[dict]:
-    """Extract ARCH-GAP tags from HTML comments, excluding code blocks."""
     try:
         raw = file_path.read_text(encoding="utf-8")
     except Exception:
@@ -86,10 +58,6 @@ def extract_arch_gaps(file_path: Path) -> list[dict]:
     return gaps
 
 
-# ---------------------------------------------------------------------------
-# Header extraction
-# ---------------------------------------------------------------------------
-
 def extract_header_value(content: str, header: str) -> str | None:
     lines = content.splitlines()
     for i, line in enumerate(lines):
@@ -104,10 +72,6 @@ def extract_header_value(content: str, header: str) -> str | None:
     return None
 
 
-# ---------------------------------------------------------------------------
-# Staleness check
-# ---------------------------------------------------------------------------
-
 def days_since(date_str: str) -> int | None:
     try:
         date = datetime.datetime.strptime(date_str.strip(), "%Y-%m-%d").date()
@@ -116,31 +80,16 @@ def days_since(date_str: str) -> int | None:
         return None
 
 
-# ---------------------------------------------------------------------------
-# System/BC folder inventory — fully dynamic (no hardcoded slugs)
-# ---------------------------------------------------------------------------
-
 def check_system_inventory() -> tuple[list[str], list[str]]:
-    """
-    Discover system folders under architecture/systems/ and report:
-    - Folders missing an index.md
-    - Folders that appear to be stubs (index.md exists but is entirely PENDING_DISCOVERY)
-    Returns (issues, ok_list).
-    """
     issues = []
     ok_list = []
     systems_dir = WORKSPACE_ROOT / "architecture" / "systems"
     if not systems_dir.exists():
         return (["architecture/systems/ directory does not exist"], [])
 
-    system_dirs = sorted(
-        f for f in systems_dir.iterdir()
-        if f.is_dir() and f.name not in {"system-template"}
-    )
-
+    system_dirs = sorted(f for f in systems_dir.iterdir() if f.is_dir() and f.name != "system-template")
     if not system_dirs:
-        issues.append("No system folders found under architecture/systems/ (only system-template exists)")
-        return (issues, ok_list)
+        return (["No system folders found under architecture/systems/ (only system-template exists)"], ok_list)
 
     for folder in system_dirs:
         index = folder / "index.md"
@@ -153,7 +102,6 @@ def check_system_inventory() -> tuple[list[str], list[str]]:
             issues.append(f"UNREADABLE index.md: architecture/systems/{folder.name}/")
             continue
 
-        # Check if still a pure stub (every section is PENDING_DISCOVERY or TBD)
         non_placeholder_lines = [
             ln for ln in content.splitlines()
             if ln.strip()
@@ -170,12 +118,7 @@ def check_system_inventory() -> tuple[list[str], list[str]]:
     return (issues, ok_list)
 
 
-# ---------------------------------------------------------------------------
-# ADR sequence check
-# ---------------------------------------------------------------------------
-
 def check_adr_sequence() -> list[str]:
-    """Verify ADR files are sequentially numbered with no gaps."""
     issues = []
     decisions_dir = WORKSPACE_ROOT / "decisions"
     if not decisions_dir.exists():
@@ -200,10 +143,6 @@ def check_adr_sequence() -> list[str]:
     return issues
 
 
-# ---------------------------------------------------------------------------
-# Main report
-# ---------------------------------------------------------------------------
-
 def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: bool = False):
     files = collect_markdown_files()
     print("verify_coverage.py — Architectural Coverage Report")
@@ -212,9 +151,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
     print(f"Files:     {len(files)} active markdown files scanned")
     print("=" * 70)
 
-    # ------------------------------------------------------------------
-    # 1. ARCH-GAP Inventory
-    # ------------------------------------------------------------------
     if not stale_only and not systems_only:
         all_gaps: list[dict] = []
         for f in files:
@@ -225,15 +161,12 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
             by_owner[gap['owner']].append(gap)
 
         unowned = by_owner.pop("UNSPECIFIED — required", [])
-
         print(f"\n### ARCH-GAP Inventory ({len(all_gaps)} open gaps)\n")
-
         if unowned:
             print(f"  ⚠  GAPS WITHOUT OWNER ({len(unowned)}) — owner field is required:")
             for gap in unowned:
                 print(f"    [{gap['file']}]  {gap['description']}")
             print()
-
         if not all_gaps:
             print("  No ARCH-GAP tags found.")
         else:
@@ -245,9 +178,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
                     print(f"      {gap['description']}")
                 print()
 
-    # ------------------------------------------------------------------
-    # 2. Document Status Distribution
-    # ------------------------------------------------------------------
     if not gaps_only and not stale_only and not systems_only:
         status_counts: dict[str, int] = defaultdict(int)
         status_unknown = []
@@ -274,9 +204,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
             for path in status_unknown:
                 print(f"    {path}")
 
-    # ------------------------------------------------------------------
-    # 3. Stale Documents
-    # ------------------------------------------------------------------
     if not gaps_only and not systems_only:
         stale: list[tuple[int, str, str]] = []
         for f in files:
@@ -293,7 +220,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
                 stale.append((age, str(f.relative_to(WORKSPACE_ROOT)), status))
 
         stale.sort(reverse=True)
-
         print("=" * 70)
         print(f"\n### Stale Documents (Last Updated > {STALE_THRESHOLD_DAYS} days ago)\n")
         if not stale:
@@ -302,9 +228,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
             for age, path, status in stale:
                 print(f"  {age:>4}d  [{status:<10}]  {path}")
 
-    # ------------------------------------------------------------------
-    # 4. System Folder Inventory
-    # ------------------------------------------------------------------
     if not gaps_only and not stale_only:
         issues, ok_list = check_system_inventory()
         print("=" * 70)
@@ -316,9 +239,6 @@ def run_report(gaps_only: bool = False, stale_only: bool = False, systems_only: 
         if not issues and not ok_list:
             print("  No system folders found.")
 
-    # ------------------------------------------------------------------
-    # 5. ADR Sequence
-    # ------------------------------------------------------------------
     if not gaps_only and not stale_only and not systems_only:
         adr_issues = check_adr_sequence()
         print("=" * 70)
