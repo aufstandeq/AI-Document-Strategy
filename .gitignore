@@ -3,6 +3,10 @@ architecture/.DS_Store
 architecture/.DS_Store
 architecture/.DS_Store
 
+# Python bytecode
+__pycache__/
+*.pyc
+
 # Agent loop — ephemeral run state and logs
 agent/STATE.md
 agent/logs/*.md
