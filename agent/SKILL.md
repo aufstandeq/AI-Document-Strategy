@@ -66,6 +66,7 @@ verify_docs.py
 verify_e2e.py
 verify_coverage.py
 verify_claude_skills.py
+verify_skill_trigger_fixtures.py
 scaffold_adr.py
 scaffold_system.py
 .github/
