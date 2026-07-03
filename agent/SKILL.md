@@ -45,6 +45,7 @@ architecture/context/
 architecture/views/
 architecture/systems/          (new systems via scaffold_system.py only)
 decisions/                     (new ADRs via scaffold_adr.py only)
+standards/
 governance/risks.md
 governance/assumptions.md
 governance/open-questions.md
@@ -82,7 +83,6 @@ agent/prompts/
 README.md
 how-to-start.md
 onboarding-dev.md
-standards/
 ```
 
 ---
