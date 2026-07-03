@@ -186,8 +186,9 @@
       "bases:Create new base": false
     }
   },
-  "active": "d329dd2ac746f35f",
+  "active": "959f6f4a96a9c604",
   "lastOpenFiles": [
+    "verify_claude_skills.py",
     "agent/docs/claude-skills-specification.md",
     "agent/docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf",
     "agent/SKILL.md",
