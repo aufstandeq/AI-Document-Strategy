@@ -22,6 +22,9 @@ jobs:
     - name: Claude skills validation (hard gate)
       run: python3 verify_claude_skills.py
 
+    - name: Skill trigger fixtures validation (hard gate)
+      run: python3 verify_skill_trigger_fixtures.py
+
     - name: Structural validation (hard gate)
       run: python3 verify_docs.py
 
