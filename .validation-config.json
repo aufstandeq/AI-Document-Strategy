@@ -29,6 +29,12 @@
       "hard_gate": true
     },
     {
+      "id": "skill-verifier-execution",
+      "name": "Executable skill verifier fixture validation",
+      "command": ["python3", "verify_skill_verifier_execution.py"],
+      "hard_gate": true
+    },
+    {
       "id": "source-fact-citation-fixtures",
       "name": "Source fact citation fixtures validation",
       "command": ["python3", "verify_source_fact_citation_fixtures.py"],
