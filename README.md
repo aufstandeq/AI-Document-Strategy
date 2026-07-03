@@ -34,6 +34,7 @@ TBD
 * **Archive Rather Than Delete**: Superseded documents are moved to the archive directory rather than deleted to retain history.
 
 ## Repository Navigation
+* [strategy.md](./strategy.md): Reusable AI-assisted documentation strategy and operating model.
 * [how-to-start.md](./how-to-start.md): Onboarding guide and operational workflow (Read this next).
 * [onboarding-dev.md](./onboarding-dev.md): Developer-specific onboarding with local verification commands.
 * [glossary.md](./glossary.md): Authoritative domain vocabulary and technical terms.
@@ -86,11 +87,11 @@ TBD
 ### 3. Structural Link Rules
 All cross-document references must use relative paths (e.g. `[Standards](./standards/technical-standards.md)`), never root-absolute paths or Windows backslash paths.
 
-### 4. Running the Local Linter
-To verify structural rules locally before pushing changes to GitHub:
+### 4. Running Local Validation
+To verify repository rules locally before pushing changes to GitHub:
 
 ```bash
-python3 verify_docs.py
+python3 run_validation.py
 ```
 
 <!-- Note: Instructions for running the autonomous agentic loop have been isolated to agent/README.md -->
@@ -112,5 +113,3 @@ If you are an AI assistant or agent reading this repository:
 *   **Ignore the `/archive` Directory:** Do not read, search, or index documents under `archive/` unless the user explicitly instructs you to reference deprecated or legacy documents.
 *   **Source of Truth:** Treat only the active directories (`architecture/`, `standards/`, `decisions/`, `governance/`, and `glossary.md`) as the current authoritative state.
 *   **No Invention:** Do not extrapolate or invent system actors, requirements, integration systems, or technologies that are not explicitly documented.
-
-
