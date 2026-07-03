@@ -4,7 +4,7 @@
 Approved
 
 ## Purpose
-Overview of the agentic documentation loop and multi-agent architecture team.
+Overview of the agentic documentation loop, current Claude skills operating model, and reference prompt-agent architecture.
 
 ## Owner
 Architecture Team
@@ -20,61 +20,129 @@ See [Glossary](../glossary.md) for definitions of key terms.
 
 ## 1. What is the Agentic Loop?
 
-The agentic documentation loop is an autonomous system that governs and maintains the architecture-as-code repository. It uses a combination of a deterministic Python validation harness and a multi-agent team of specialized architects to automatically identify structural errors, fill in missing metadata, check for compliance, and resolve linter/E2E failures.
+The agentic documentation loop is a controlled documentation maintenance system. It combines deterministic Python validation, explicit repository policy, Claude skills, and human source-fact ownership to keep architecture documentation structurally healthy without allowing AI to invent missing facts.
 
-It advances the repository from a simple validated template (Level 3 Harness) to an active, autonomous documentation partner (Level 4 Loop Engineering).
-
----
-
-## 2. Directory Structure
-
-All files related to the agentic system live inside the `agent/` folder:
-
-*   **[SKILL.md](./SKILL.md):** Governing policy (allowlists, stop rules).
-*   **[GOAL.md](./GOAL.md):** Success criteria definition.
-*   **STATE.md:** Ephemeral run state (gitignored).
-*   **[decisions/](./decisions/0002-agentic-loop-architecture.md):** System architecture decisions.
-    *   [ADR-0002](./decisions/0002-agentic-loop-architecture.md): Agentic loop architecture.
-    *   [ADR-0003](./decisions/0003-agentic-team-collaboration.md): Multi-agent team collaboration design.
-*   **[prompts/](./prompts/supervisor_prompt.md):** System prompts for all agents.
-    *   [supervisor_prompt.md](./prompts/supervisor_prompt.md): Coordinates specialists.
-    *   [solutions_architect_prompt.md](./prompts/solutions_architect_prompt.md): Solutions Architect prompt.
-    *   [software_architect_prompt.md](./prompts/software_architect_prompt.md): Software Architect prompt.
-    *   [security_reviewer_prompt.md](./prompts/security_reviewer_prompt.md): Security Reviewer prompt.
-    *   [maker_system_prompt.md](./prompts/maker_system_prompt.md): Generic Maker (legacy) prompt.
-    *   [checker_system_prompt.md](./prompts/checker_system_prompt.md): Checker prompt.
-*   **[docs/](./docs/claude-skills-specification.md):** Agent framework documentation.
-    *   [claude-skills-specification.md](./docs/claude-skills-specification.md): Native custom skills layout and syntax.
-    *   [The-Complete-Guide-to-Building-Skill-for-Claude.pdf](./docs/The-Complete-Guide-to-Building-Skill-for-Claude.pdf): Anthropic's PDF guide to building skills.
-*   **logs/:** Escalation logs (written on loop failure).
+The loop advances the repository from a simple validated template (Level 3 Harness) to an active documentation partner (Level 4 Loop Engineering). Higher maturity levels, such as semantic drift detection and scheduled maintenance, are described in [strategy.md](../strategy.md).
 
 ---
 
-## 3. Operational Harness & Commands
+## 2. Current Execution Model
 
-The orchestrator loop is driven by the pure Python script `agent_harness.py` at the repository root. Run these commands from the root:
+The current reliable execution model is:
+
+```text
+human request
+  ↓
+Claude Code skill selection
+  ↓
+repository policy and validation state review
+  ↓
+bounded repair, scaffold, or escalation
+  ↓
+python3 run_validation.py
+```
+
+Primary current components:
+
+| Component | Status | Purpose |
+|---|---|---|
+| `.claude/skills/` | Current | Claude Code skill instructions and triggers. |
+| `.claude/skills/tests/` | Current | Skill trigger, repair-plan, source-fact, retirement, and executable behavior fixtures. |
+| `.validation-config.json` | Current | Shared validation gate configuration. |
+| `run_validation.py` | Current | Local validation runner. Intended CI target. |
+| `verify_*.py` | Current | Deterministic validation gates. |
+| `agent/SKILL.md` | Current | Policy authority for write boundaries and documentation rules. |
+
+The current operating rule is:
+
+```text
+observe → plan → ask/escalate → repair → verify
+```
+
+---
+
+## 3. Reference / Future Prompt-Agent Model
+
+The `agent/prompts/` directory describes a Supervisor plus specialist-agent topology. Treat these prompts as a reference or future harness design unless a runtime explicitly wires them into execution.
+
+They are retained because they document the intended multi-agent decomposition:
+
+- Supervisor / Director
+- Solutions Architect
+- Software Architect
+- Security Reviewer
+- Checker
+
+The currently dependable execution path remains the Claude skills and verifier model described above.
+
+---
+
+## 4. Directory Structure
+
+Agent-system files live in both `.claude/` and `agent/`:
+
+```text
+.claude/skills/                 Current Claude Code skill operating layer
+.claude/skills/tests/           Skill fixtures and executable behavior tests
+agent/SKILL.md                  Governing policy
+agent/GOAL.md                   Success criteria definition
+agent/STATE.md                  Ephemeral run state (gitignored)
+agent/decisions/                ADRs for the agentic loop design
+agent/docs/                     Reference documentation for skills and agent frameworks
+agent/prompts/                  Reference / future prompt-agent design
+agent/logs/                     Escalation logs written on loop failure
+```
+
+Key files:
+
+* **[SKILL.md](./SKILL.md):** Governing policy: allowlists, blocklists, and documentation rules.
+* **[GOAL.md](./GOAL.md):** Success criteria definition.
+* **[decisions/](./decisions/0002-agentic-loop-architecture.md):** Architecture decisions for the agentic loop.
+* **[prompts/](./prompts/supervisor_prompt.md):** Reference prompt-agent architecture.
+* **[docs/](./docs/claude-skills-specification.md):** Agent framework documentation.
+
+---
+
+## 5. Operational Commands
+
+Run these commands from the repository root.
+
+### Preferred validation command
 
 ```bash
-# 1. Start or check the loop status
+python3 run_validation.py
+```
+
+This command loads `.validation-config.json` and runs the configured validation gates in order.
+
+### Harness commands
+
+The Python harness remains available for loop-state preparation:
+
+```bash
+# Check loop status
 python3 agent_harness.py --status
 
-# 2. Run verifiers, update STATE.md, and print the Supervisor brief
+# Run verifiers, update STATE.md, and print the Supervisor brief
 python3 agent_harness.py --prepare
 
-# 3. Reset the loop state for a fresh execution
+# Reset loop state for a fresh execution
 python3 agent_harness.py --reset
 ```
 
-### Harness Exit Codes (`--prepare`):
-*   `2` — **SUCCESS:** Both verifier scripts (`verify_docs.py` and `verify_e2e.py`) exited `0`. Loop terminates.
-*   `1` — **ESCALATED:** Loop stopped due to max iterations, lack of progress, or blocklist violation. Details written to `agent/logs/ESCALATION.md`.
-*   `0` — **CONTINUE:** Failures remain. The brief has been written to `agent/STATE.md`. Claude Code should act as the **Supervisor** to fix them.
+Harness exit codes for `--prepare`:
+
+| Code | Meaning |
+|---:|---|
+| 2 | Success: verifier scripts exited `0`; loop terminates. |
+| 1 | Escalated: loop stopped due to max iterations, lack of progress, or blocklist violation. |
+| 0 | Continue: failures remain; `agent/STATE.md` contains the next brief. |
 
 ---
 
-## 4. Multi-Agent Team Architecture
+## 6. Reference Multi-Agent Topology
 
-The loop follows an **Incident Response topology (Supervisor + Specialists)**:
+The reference prompt-agent topology is:
 
 ```mermaid
 graph TD
@@ -89,15 +157,18 @@ graph TD
     Checker -->|5. PASS/FAIL audit| Orchestrator
 ```
 
-### Role Summary:
-1.  **Supervisor:** Analyzes failure summaries, delegates to specialists, and merges their outputs.
-2.  **Solutions Architect:** Updates business, system, and external context files, and ADRs.
-3.  **Software Architect:** Updates system views, quality attributes, and technical standards.
-4.  **Security Reviewer:** Updates risks and assumptions logs.
-5.  **Checker:** Audits final proposed changes against SKILL.md rules before writing to disk.
+This topology is a design reference. It is not the same thing as the current Claude Code skills execution path unless explicitly wired by a runtime.
 
 ---
 
-## 5. Stop Authority Rule
+## 7. Stop Authority Rule
 
-The agent is never allowed to declare success based on its own opinion. Success is defined exclusively by the Python verification scripts (`verify_docs.py` and `verify_e2e.py`) exiting with code 0.
+The agent is never allowed to declare success based on its own opinion. Success is defined by deterministic verification gates exiting successfully.
+
+Current preferred command:
+
+```bash
+python3 run_validation.py
+```
+
+Until CI is simplified, GitHub Actions may still list individual verifier commands. The strategic target is for local validation and CI validation to use the same runner.
