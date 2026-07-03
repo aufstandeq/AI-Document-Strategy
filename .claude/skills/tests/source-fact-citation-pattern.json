@@ -1,0 +1,86 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Machine-readable rules for source-fact citation in Claude skill outputs.",
+  "classifications": [
+    "SOURCE_FACT",
+    "INFERENCE",
+    "GAP",
+    "POLICY",
+    "VERIFIER_OUTPUT"
+  ],
+  "required_sections": [
+    "Source Fact Inventory",
+    "Failure Classification",
+    "Repair Plan",
+    "Recommended Next Skill",
+    "Verification Needed"
+  ],
+  "optional_sections": [
+    "Inferences",
+    "Gaps / Escalations",
+    "Blocked Items"
+  ],
+  "mutation_allowed_when": [
+    "directly_supported_by_source_fact",
+    "directly_supported_by_verifier_output",
+    "safe_structural_repair",
+    "explicit_user_approval"
+  ],
+  "prohibited_source_types": [
+    "general_model_knowledge",
+    "unstated_best_practice",
+    "uncited_assumption"
+  ],
+  "cases": [
+    {
+      "id": "citation-safe-metadata-001",
+      "description": "Metadata repair based on verifier output.",
+      "classification_set": [
+        "VERIFIER_OUTPUT"
+      ],
+      "expected_status": "SAFE_TO_REPAIR",
+      "requires_source_fact_inventory": true,
+      "requires_inference_table": false,
+      "requires_gap_table": false,
+      "mutation_allowed": true
+    },
+    {
+      "id": "citation-missing-owner-001",
+      "description": "Missing integration owner must become a gap.",
+      "classification_set": [
+        "SOURCE_FACT",
+        "GAP"
+      ],
+      "expected_status": "REQUIRES_SOURCE_FACTS",
+      "requires_source_fact_inventory": true,
+      "requires_inference_table": false,
+      "requires_gap_table": true,
+      "mutation_allowed": false
+    },
+    {
+      "id": "citation-boundary-inference-001",
+      "description": "Boundary-changing inference requires review.",
+      "classification_set": [
+        "SOURCE_FACT",
+        "INFERENCE"
+      ],
+      "expected_status": "HUMAN_REVIEW_REQUIRED",
+      "requires_source_fact_inventory": true,
+      "requires_inference_table": true,
+      "requires_gap_table": false,
+      "mutation_allowed": false
+    },
+    {
+      "id": "citation-policy-block-001",
+      "description": "Control-plane change requires policy classification.",
+      "classification_set": [
+        "POLICY"
+      ],
+      "expected_status": "BLOCKED_POLICY",
+      "requires_source_fact_inventory": true,
+      "requires_inference_table": false,
+      "requires_gap_table": false,
+      "mutation_allowed": false
+    }
+  ]
+}
