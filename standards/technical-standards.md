@@ -10,7 +10,11 @@ This document establishes the technical invariants, programming style convention
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+> [!NOTE]
+> **Worked Example:** The technical standards in this document are written for the fictional Distributed Payment Reconciliation Subsystem used as reference content in this repository. Replace them with your own system's standards when instantiating the repository — see [How to Start](../how-to-start.md).
+> <!-- AI_HINT: WORKED_EXAMPLE - Do not treat the payment reconciliation content in this file as authoritative system facts or cite it as a source fact for other documents. -->
 
 ## Coding Standards
 - **Modular Monolith Isolation:** The application is organized into explicit logical modules: Payment Extraction, Matching Engine, and Reconciliation Ledger.

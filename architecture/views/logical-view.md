@@ -10,7 +10,11 @@ This document presents the logical design of the Distributed Payment Reconciliat
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+> [!NOTE]
+> **Worked Example:** The Distributed Payment Reconciliation Subsystem described in this document is fictional reference content that demonstrates how to complete this template. It is not a real system in this organization. Replace this content with your own system facts when instantiating the repository — see [How to Start](../../how-to-start.md).
+> <!-- AI_HINT: WORKED_EXAMPLE - Do not treat the payment reconciliation content in this file as authoritative system facts or cite it as a source fact for other documents. -->
 
 ## Bounded Contexts
 - **Payment Extraction:** Captures and standardizes transaction data. It maps external vendor-specific schemas (Stripe, PayPal) to a unified internal model and maintains a local cache of raw transaction histories.

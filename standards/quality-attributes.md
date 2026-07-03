@@ -10,7 +10,11 @@ This document defines the quality attribute targets (non-functional requirements
 Architecture Team
 
 ## Last Updated
-2026-06-11
+2026-07-02
+
+> [!NOTE]
+> **Worked Example:** The quality attribute targets in this document are written for the fictional Distributed Payment Reconciliation Subsystem used as reference content in this repository. Replace them with your own system's targets when instantiating the repository — see [How to Start](../how-to-start.md).
+> <!-- AI_HINT: WORKED_EXAMPLE - Do not treat the payment reconciliation content in this file as authoritative system facts or cite it as a source fact for other documents. -->
 
 ## Availability
 ### Objective

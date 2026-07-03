@@ -34,6 +34,7 @@ TBD
 * **Archive Rather Than Delete**: Superseded documents are moved to the archive directory rather than deleted to retain history.
 
 ## Repository Navigation
+* [strategy.md](./strategy.md): The AI & human documentation strategy — operating model, maturity ladder, and trust boundaries.
 * [how-to-start.md](./how-to-start.md): Onboarding guide and operational workflow (Read this next).
 * [onboarding-dev.md](./onboarding-dev.md): Developer-specific onboarding with local verification commands.
 * [glossary.md](./glossary.md): Authoritative domain vocabulary and technical terms.
@@ -112,5 +113,6 @@ If you are an AI assistant or agent reading this repository:
 *   **Ignore the `/archive` Directory:** Do not read, search, or index documents under `archive/` unless the user explicitly instructs you to reference deprecated or legacy documents.
 *   **Source of Truth:** Treat only the active directories (`architecture/`, `standards/`, `decisions/`, `governance/`, and `glossary.md`) as the current authoritative state.
 *   **No Invention:** Do not extrapolate or invent system actors, requirements, integration systems, or technologies that are not explicitly documented.
+*   **Worked Example Content:** Files containing a `WORKED_EXAMPLE` AI hint describe a fictional reference system (the Distributed Payment Reconciliation Subsystem) used to demonstrate completed templates. Treat that content as illustrative only — never cite it as a source fact or propagate it into other documents.
 
 
