@@ -67,11 +67,14 @@ The success authority remains the repository verifier and harness layer.
 | Gate | Command | Scope | Hard gate? |
 |---|---|---|---:|
 | Claude skills validation | `python3 verify_claude_skills.py` | `.claude/skills/**` structure, naming, and frontmatter | Yes |
+| Skill trigger fixture validation | `python3 verify_skill_trigger_fixtures.py` | Machine-readable skill trigger expectations | Yes |
+| Repair-plan fixture validation | `python3 verify_repair_plan_fixtures.py` | Machine-readable checker repair-plan expectations | Yes |
+| Skill verifier fixture validation | `python3 verify_skill_verifier_fixtures.py` | Positive and negative cases for the skill validator | Yes |
 | Structural architecture validation | `python3 verify_docs.py` | Active architecture Markdown document structure and links | Yes |
 | Cross-repository audit | `python3 verify_e2e.py` | Orphans, glossary links, ARCH-GAP owners, ADR sequence, system references | Yes |
 | Coverage report | `python3 verify_coverage.py` | Gap inventory, status distribution, stale docs, system inventory | No |
 
-The CI workflow runs skill validation before architecture-document validation. This keeps `.claude/skills/**` tracked and verified without forcing skill files into the architecture-document contract.
+The CI workflow runs skill and fixture validation before architecture-document validation. This keeps `.claude/skills/**` tracked and verified without forcing skill files into the architecture-document contract.
 
 ## Core Workflow
 
@@ -165,6 +168,13 @@ Build a source-fact inventory before editing.
     create-system-scaffold/SKILL.md
     create-system-context/SKILL.md
     escalate-doc-gap/SKILL.md
+    tests/
+      trigger-cases.md
+      example-transcripts.md
+      trigger-cases.json
+      repair-plan-fixture.md
+      repair-plan-fixture.json
+      skill-verifier-fixtures.json
 ```
 
 Rules:
@@ -174,7 +184,7 @@ Rules:
 - `SKILL.md` frontmatter includes `name` and `description`.
 - Frontmatter `name` matches the folder name.
 - Description includes trigger context using `Use when`.
-- Parent-level `README.md` and `PLAN.md` are allowed.
+- Parent-level `README.md`, `PLAN.md`, and `tests/` are allowed.
 - Individual skill folders do not contain README files.
 
 ## Repository Control Files
@@ -185,10 +195,15 @@ These files define repository behavior and require human review when changed:
 agent/SKILL.md
 agent/GOAL.md
 agent_harness.py
+audit_ignore.py
+.doc-audit-ignore
 verify_docs.py
 verify_e2e.py
 verify_coverage.py
 verify_claude_skills.py
+verify_skill_trigger_fixtures.py
+verify_repair_plan_fixtures.py
+verify_skill_verifier_fixtures.py
 scaffold_adr.py
 scaffold_system.py
 agent/prompts/
@@ -200,46 +215,30 @@ onboarding-dev.md
 
 ## Audit Boundary
 
-`.claude/skills/**` is tracked runtime configuration.
+`.claude/skills/**` is tracked runtime configuration, not active architecture documentation.
 
 Current state:
 
-- `.claude/` is excluded directly in `verify_docs.py`.
-- `.claude/` is excluded directly in `verify_e2e.py`.
-- `.claude/skills/**` is validated by `verify_claude_skills.py`.
+- `.doc-audit-ignore` defines architecture-audit exclusions.
+- `audit_ignore.py` provides shared ignore semantics.
+- `verify_docs.py`, `verify_e2e.py`, and `verify_coverage.py` use `.doc-audit-ignore` for audit scope.
+- `.claude/skills/**` is validated by `verify_claude_skills.py` and fixture validators.
 - `.claude/` is not in `.gitignore`.
 
-Future state:
+## Completed Backlog
 
-- Add a dedicated `.doc-audit-ignore` or equivalent file.
-- Move non-architecture Markdown exclusions into that file.
-- Keep Git tracking and architecture-audit scope separate.
-
-Tracked as issue #2.
-
-## Completion Criteria for This PR
-
-The current PR is complete when:
-
-- Seven core skills are present.
-- Parent skills index exists.
-- Operating plan exists.
-- Claude skills verifier exists.
-- CI runs the Claude skills verifier before architecture audits.
-- `.claude/` remains tracked by Git.
-- Architecture audits ignore `.claude/` as non-architecture Markdown.
-- GitHub Actions passes.
-- PR body explains the operating model clearly.
+| Item | Result |
+|---|---|
+| Skill trigger tests | Human-readable and machine-readable trigger cases added. |
+| Example task transcripts | Behavioral transcripts added. |
+| Repair-plan fixture | Human-readable and machine-readable repair-plan fixtures added. |
+| Skill verifier fixtures | Positive and negative skill-validator fixtures added. |
+| `.doc-audit-ignore` | Audit scope is now separated from Git tracking. |
 
 ## Future Backlog
 
 | Item | Purpose |
 |---|---|
-| Skill trigger tests | Verify each skill's description triggers for intended requests and does not over-trigger. |
-| Example task transcripts | Add concise examples showing the intended skill sequence. |
-| Repair-plan fixture | Provide sample verifier failures and expected `run-doc-checker` repair plan output. |
-| Skill verifier fixtures | Add positive and negative fixture cases for `verify_claude_skills.py`. |
-| `.doc-audit-ignore` | Decouple audit scope from Git tracking and hardcoded verifier exclusions. |
 | Source-fact citation pattern | Standardize how source facts are cited in repair plans. |
 | Skill retirement policy | Define how outdated skills are deprecated without deleting history. |
 
