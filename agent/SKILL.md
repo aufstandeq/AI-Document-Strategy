@@ -62,6 +62,8 @@ Writes to any of the following paths fail the loop immediately and trigger escal
 
 ```
 agent_harness.py
+audit_ignore.py
+.doc-audit-ignore
 verify_docs.py
 verify_e2e.py
 verify_coverage.py
