@@ -25,6 +25,9 @@ jobs:
     - name: Skill trigger fixtures validation (hard gate)
       run: python3 verify_skill_trigger_fixtures.py
 
+    - name: Repair plan fixtures validation (hard gate)
+      run: python3 verify_repair_plan_fixtures.py
+
     - name: Structural validation (hard gate)
       run: python3 verify_docs.py
 
