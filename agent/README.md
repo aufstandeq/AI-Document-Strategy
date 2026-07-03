@@ -14,7 +14,7 @@ Architecture Team
 
 ---
 
-See [Glossary](../glossary.md) for definitions of key terms.
+See the [Agent Tooling Glossary](./glossary.md) for agent-system terms and the [Project Glossary](../glossary.md) for target-system vocabulary.
 
 ---
 
@@ -95,6 +95,7 @@ agent/logs/                     Escalation logs written on loop failure
 
 Key files:
 
+* **[Agent Tooling Glossary](./glossary.md):** Controlled vocabulary for the AI documentation operating system.
 * **[SKILL.md](./SKILL.md):** Governing policy: allowlists, blocklists, and documentation rules.
 * **[GOAL.md](./GOAL.md):** Success criteria definition.
 * **[ADR-0002](./decisions/0002-agentic-loop-architecture.md):** Agentic loop architecture decision.
