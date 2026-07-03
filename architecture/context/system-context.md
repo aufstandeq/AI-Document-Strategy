@@ -4,83 +4,54 @@
 Draft
 
 ## Purpose
-This document establishes the system boundary, scope, high-level responsibilities, and external dependencies of the Distributed Payment Reconciliation Subsystem.
+Define the target system boundary, purpose, responsibilities, scope, non-responsibilities, external dependencies, and high-level context.
 
 ## Owner
-Architecture Team
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+TBD
 
 ## Last Updated
 2026-07-02
 
 ---
 
-## Example Content Notice
-
-This document currently contains example architecture content for a Distributed Payment Reconciliation Subsystem. It is retained as a worked example and must not be treated as approved source-truth architecture for a real implementation until replaced with project-specific source facts and explicitly re-approved.
-
----
-
 ## System Purpose
-The Distributed Payment Reconciliation Subsystem acts as an automated audit layer. It continuously fetches transaction logs from external payment providers (Stripe, PayPal) and compares them against internal Billing Ledger logs to ensure financial consistency, catch double-billing, detect missing cash deposits, and log exceptions.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document what the system is for and the problem it solves.
 
 ## System Responsibilities
-- **Transaction Ingestion:** Fetching historical payment logs and accepting real-time webhook payloads from Stripe and PayPal.
-- **Rule-Based Matching:** Aligning gateway charges and disputes with internal invoice ledger entries based on ID, amount, timestamp, and gateway reference.
-- **Exception Logging:** Flagging discrepancies (e.g., amount mismatches, missing ledger records, duplicate charges) and logging them as exceptions.
-- **Reporting & Syncing:** Pushing resolved match batches and daily reconciliation metrics down to the central Billing Ledger system.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document the primary responsibilities the system owns.
 
 ## In Scope
-- Webhook endpoints for receiving near real-time payment notifications.
-- Daily scheduled batch retrieval of transaction and payout reports via external APIs.
-- Automated multi-pass matching engine executing on a configurable cron schedule.
-- DB persistence of raw ingested transactions, match outcomes, and manually resolved exceptions.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document capabilities, behaviors, data, integrations, and operational responsibilities that are explicitly in scope.
 
 ## Explicit Non-Responsibilities
-- Initiating, capturing, or canceling charges or refunds on Stripe/PayPal.
-- Generating new customer invoices or modifying ledger transactions directly without authorization.
-- Identity management for analysts (handled by external Enterprise Identity Providers).
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document what the system must not own. This section is required to prevent boundary drift.
 
 ## External Dependencies
-- **Stripe API:** Gateway service used to retrieve transaction logs and capture webhook alerts.
-- **PayPal API:** Gateway service used to query transaction logs and capture webhook alerts.
-- **Billing Ledger API:** Downstream destination for daily reconciliation results and exceptions.
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document external systems, platforms, APIs, services, data sources, and users that interact with the system. Keep detailed integration ownership in [External Systems](./external-systems.md).
 
 ## High-Level Context Diagram
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Add a C4 System Context diagram or equivalent high-level diagram here.
+
 ```mermaid
 flowchart TD
-    subgraph Gateways [Payment Gateways]
-        stripe[Stripe API & Webhooks]
-        paypal[PayPal API & Webhooks]
-    end
+    user[User or External Actor]
+    system[Target System]
+    external[External System]
 
-    subgraph Internal [Internal Network]
-        subgraph Subsystem [Reconciliation Subsystem - Modular Monolith]
-            pe[Payment Extraction Module]
-            me[Matching Engine Module]
-            rl[Reconciliation Ledger Module]
-            db[(Database - Isolated Schemas)]
-            
-            pe -.->|In-Process Event / API| me
-            me -.->|In-Process API| rl
-            pe === db
-            me === db
-            rl === db
-        end
-
-        billing[Billing Ledger System]
-    end
-
-    analyst[Reconciliation Analyst]
-    admin[Operations Admin]
-
-    %% Connections
-    stripe -->|Webhooks / API Queries| pe
-    paypal -->|Webhooks / API Queries| pe
-    rl -->|Reconciliation Reports| billing
-    
-    analyst -->|Review Mismatches & Resolve| rl
-    admin -->|Configure & Manual Sync| pe
+    user --> system
+    system --> external
 ```
+
+## Architecture Clarity Notes
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Document any context needed for developers or reviewers to understand what should and should not be built.
 
 ---
 
