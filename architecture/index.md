@@ -36,6 +36,9 @@ TBD
 
 ## Related Documents
 
+### Architecture Readiness
+- [Architecture Clarity Checklist](./architecture-clarity-checklist.md)
+
 ### Context
 - [Business Context](./context/business-context.md)
 - [System Context](./context/system-context.md)
