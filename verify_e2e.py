@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-"""Cross-repository architecture documentation audit."""
-
 from __future__ import annotations
 
 import re
@@ -8,43 +6,23 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
+from audit_ignore import is_audit_ignored, load_audit_ignore_patterns
+
 WORKSPACE_ROOT = Path(__file__).parent.resolve()
 
-EXCLUDE_DIR_PARTS = {
-    ".git",
-    ".github",
-    ".agents",
-    ".claude",
-    "__pycache__",
-    "archive",
-    "TEMP",
-    "Reference",
-}
-
-ORPHAN_EXCLUDE_PARTS = EXCLUDE_DIR_PARTS | {"system-template"}
-ORPHAN_ALLOWLIST = {
-    "README.md",
-    "glossary.md",
-    "how-to-start.md",
-    "onboarding-dev.md",
-    "STATE.md",
-    "CLAUDE.md",
-}
-VIEW_FILES = {
-    "logical-view.md",
-    "deployment-view.md",
-    "data-view.md",
-    "security-view.md",
-    "integration-view.md",
-}
+ORPHAN_ALLOWLIST = {"README.md", "glossary.md", "how-to-start.md", "onboarding-dev.md", "STATE.md", "CLAUDE.md"}
+VIEW_FILES = {"logical-view.md", "deployment-view.md", "data-view.md", "security-view.md", "integration-view.md"}
 
 
 def collect_files(exclude_extra: set[str] | None = None) -> list[Path]:
-    exclude = EXCLUDE_DIR_PARTS | (exclude_extra or set())
+    patterns = load_audit_ignore_patterns(WORKSPACE_ROOT)
+    extra = exclude_extra or set()
     files: list[Path] = []
     for path in sorted(WORKSPACE_ROOT.rglob("*.md")):
-        rel_parts = path.relative_to(WORKSPACE_ROOT).parts
-        if any(part in exclude for part in rel_parts):
+        parts = path.relative_to(WORKSPACE_ROOT).parts
+        if any(part in extra for part in parts):
+            continue
+        if is_audit_ignored(path, WORKSPACE_ROOT, patterns):
             continue
         if path.name.startswith(("~", ".")):
             continue
@@ -83,9 +61,6 @@ def build_inbound_index(all_files: list[Path]) -> dict[Path, list[Path]]:
 def check_orphans(all_files: list[Path], inbound: dict[Path, list[Path]]) -> list[str]:
     errors: list[str] = []
     for file_path in all_files:
-        rel_parts = file_path.relative_to(WORKSPACE_ROOT).parts
-        if any(part in ORPHAN_EXCLUDE_PARTS for part in rel_parts):
-            continue
         if file_path.name in ORPHAN_ALLOWLIST:
             continue
         if not inbound.get(file_path.resolve()):
@@ -108,9 +83,7 @@ def check_arch_gap_owners(all_files: list[Path]) -> list[str]:
             body = match.group(1).strip()
             if not owner_re.search(body):
                 desc = re.sub(r"\s+", " ", body)[:80]
-                errors.append(
-                    f"ARCH-GAP missing Owner: [{file_path.relative_to(WORKSPACE_ROOT)}] — \"{desc}...\""
-                )
+                errors.append(f"ARCH-GAP missing Owner: [{file_path.relative_to(WORKSPACE_ROOT)}] — \"{desc}...\"")
     return errors
 
 
@@ -118,8 +91,7 @@ def check_glossary_links(all_files: list[Path]) -> list[str]:
     errors: list[str] = []
     exempt_names = {"glossary.md", "README.md", "STATE.md", "CLAUDE.md"}
     for file_path in all_files:
-        rel_parts = file_path.relative_to(WORKSPACE_ROOT).parts
-        if "system-template" in rel_parts or file_path.name in exempt_names:
+        if file_path.name in exempt_names:
             continue
         try:
             content = file_path.read_text(encoding="utf-8")
@@ -135,18 +107,11 @@ def check_adr_sequence() -> list[str]:
     decisions_dir = WORKSPACE_ROOT / "decisions"
     if not decisions_dir.exists():
         return ["decisions/ directory missing"]
-    adr_files = sorted(
-        file_path
-        for file_path in decisions_dir.iterdir()
-        if file_path.is_file() and file_path.suffix == ".md" and re.match(r"^\d{4}-", file_path.name)
-    )
+    adr_files = sorted(f for f in decisions_dir.iterdir() if f.is_file() and f.suffix == ".md" and re.match(r"^\d{4}-", f.name))
     errors: list[str] = []
     expected = 1
     for file_path in adr_files:
-        match = re.match(r"^(\d{4})-", file_path.name)
-        if not match:
-            continue
-        actual = int(match.group(1))
+        actual = int(re.match(r"^(\d{4})-", file_path.name).group(1))
         if actual != expected:
             errors.append(f"ADR sequence gap: expected {expected:04d}, got {actual:04d} ({file_path.name})")
         expected = actual + 1
@@ -165,9 +130,7 @@ def check_cross_system_refs(all_files: list[Path]) -> list[str]:
                 continue
             resolved = (file_path.parent / target.split("#", 1)[0]).resolve()
             if not resolved.exists():
-                errors.append(
-                    f"BROKEN SYSTEM LINK in {file_path.relative_to(WORKSPACE_ROOT)}: '{target}' does not exist"
-                )
+                errors.append(f"BROKEN SYSTEM LINK in {file_path.relative_to(WORKSPACE_ROOT)}: '{target}' does not exist")
     return errors
 
 
@@ -187,25 +150,21 @@ def run_audit(warn_only: bool = False) -> bool:
     print(f"Files scanned: {len(all_files)}")
     print("=" * 70)
 
-    total_failures = 0
-    for check_name, errors in results:
+    total = 0
+    for name, errors in results:
         if errors:
-            print(f"\n❌ {check_name} ({len(errors)} issue{'s' if len(errors) != 1 else ''}):")
-            for error in errors:
-                print(f"   {error}")
-            total_failures += len(errors)
+            print(f"\n❌ {name} ({len(errors)} issue{'s' if len(errors) != 1 else ''}):")
+            for item in errors:
+                print(f"   {item}")
+            total += len(errors)
         else:
-            print(f"\n✅ {check_name} — passed")
+            print(f"\n✅ {name} — passed")
 
     print("\n" + "=" * 70)
-    if total_failures == 0:
+    if total == 0:
         print("All cross-repository checks passed.")
         return True
-
-    mode = "WARNINGS" if warn_only else "FAILURES"
-    print(f"{total_failures} {mode} found.")
-    if not warn_only:
-        print("Fix the issues above before merging.")
+    print(f"{total} {'WARNINGS' if warn_only else 'FAILURES'} found.")
     return warn_only
 
 
@@ -214,5 +173,4 @@ if __name__ == "__main__":
         idx = sys.argv.index("--workspace")
         if idx + 1 < len(sys.argv):
             WORKSPACE_ROOT = Path(sys.argv[idx + 1]).resolve()
-    passed = run_audit(warn_only="--warn-only" in sys.argv)
-    sys.exit(0 if passed else 1)
+    sys.exit(0 if run_audit(warn_only="--warn-only" in sys.argv) else 1)
