@@ -72,6 +72,7 @@ verify_skill_trigger_fixtures.py
 verify_repair_plan_fixtures.py
 verify_skill_verifier_fixtures.py
 verify_source_fact_citation_fixtures.py
+verify_skill_retirement_fixtures.py
 scaffold_adr.py
 scaffold_system.py
 .github/
