@@ -23,6 +23,14 @@ def load_audit_ignore_patterns(workspace_root: Path, ignore_file: str = DEFAULT_
     return patterns
 
 
+def normalize_pattern(pattern: str) -> str:
+    """Normalize only repository-relative syntax without stripping dot-prefixed names."""
+    normalized = pattern.strip()
+    if normalized.startswith("./"):
+        normalized = normalized[2:]
+    return normalized
+
+
 def is_audit_ignored(path: Path, workspace_root: Path, patterns: list[str]) -> bool:
     """Return True when a path should be excluded from architecture-document audits."""
     try:
@@ -34,7 +42,7 @@ def is_audit_ignored(path: Path, workspace_root: Path, patterns: list[str]) -> b
     rel_parts = rel_path.parts
 
     for pattern in patterns:
-        normalized = pattern.strip().lstrip("./")
+        normalized = normalize_pattern(pattern)
         if not normalized:
             continue
 
