@@ -1,46 +1,71 @@
 # Technical Standards
 
 ## Document Status
-Approved
+Draft
 
 ## Purpose
-This document establishes the technical invariants, programming style conventions, database design rules, logging requirements, and error-handling patterns for the Distributed Payment Reconciliation Subsystem.
+Define the technical standards, guidance, and reference structure used to support architecture clarity and implementation consistency for the target project.
 
 ## Owner
 Architecture Team
 
 ## Last Updated
-2026-06-11
-
-## Coding Standards
-- **Modular Monolith Isolation:** The application is organized into explicit logical modules: Payment Extraction, Matching Engine, and Reconciliation Ledger.
-- **Database Schema-Per-Module:** Each module owns its designated database schema (`extraction_schema`, `matching_schema`, `ledger_schema`). Cross-module SQL joins or direct cross-schema table queries are strictly prohibited.
-- **Public Interfaces/APIs:** Modules must communicate only through defined public APIs/interfaces (in-process services or event contracts). Direct invocation of another module's internal classes, database repositories, or helper routines is disallowed.
-
-## Logging Standards
-- **Structured JSON Logging:** All application stdout/stderr logs must be printed in structured JSON format.
-- **Trace Contexts:** Webhook HTTP requests and background reconciliation runs must carry a unique transaction or correlation ID (`correlation_id`) in all log lines.
-- **Required Metadata:** Each JSON log line must contain: `timestamp` (ISO 8601), `log_level` (INFO, WARN, ERROR, DEBUG), `module_name`, `message`, and optionally `error_stack` for exceptions.
-
-## Error Handling
-- **Standard Exception Patterns:** Use domain-specific, typed exceptions (e.g., `GatewayCommunicationException`, `MismatchException`, `LedgerSyncException`) instead of generic runtime errors.
-- **Exception Boundaries:** Lower-level failures (e.g., database network errors, JSON parsing errors) must be caught at the module boundary, logged, and wrapped in standard exceptions before bubbling up.
-- **Idempotency Recovery:** Catch duplicate webhook notifications early and exit gracefully without raising errors.
-
-## API Standards
-- **REST Webhooks:** Expose public, authenticated HTTP endpoints to receive incoming webhook events from Stripe and PayPal.
-- **API First Spec:** All external REST APIs (such as the Report Service dashboard endpoints) must be documented using OpenAPI 3.0 specs.
-- **In-Process Interface Contracts:** Public interfaces for module boundaries must be documented and stable, avoiding breaking changes across releases.
-
-## Documentation Standards
-- **Code Comments & Docstrings:** Every public API endpoint, service method, and database model must have descriptive code documentation.
-- **ADR Governance:** Any change to architecture topology, module boundaries, or external system integrations requires submitting a formal Architecture Decision Record (ADR).
-
-## Testing Standards
-- **Boundary Verification:** Write architectural boundary verification tests (e.g., ArchUnit in Java, import-linter in Python) to ensure no illegal cross-module imports are introduced.
-- **Mock-Based Ingestion Tests:** Build integration tests with mocked Stripe/PayPal webhooks to verify exception capture pathways.
-- **Rule Verification:** Maintain comprehensive unit test suites covering 100% of the matching engine's logic.
+2026-07-03
 
 ---
 
 See [Glossary](../glossary.md) for definitions of key terms used in this document.
+
+---
+
+## Standards Structure
+
+Technical standards should convert research and architectural judgment into reusable guidance without copying generic source material into project-specific architecture documents.
+
+| Area | Document | Purpose |
+|---|---|---|
+| Knowledge Model | [Architecture Knowledge Model](./architecture-knowledge-model.md) | Explains how research becomes principles, practices, how-to guidance, frameworks, selection rules, or project facts. |
+| Document Selection | [Architecture Document Selection Guidance](./architecture-document-selection.md) | Explains how architecture style, risk, and complexity determine which architecture documents are needed. |
+| Quality Attributes | [Quality Attributes](./quality-attributes.md) | Defines quality characteristics that influence architecture and implementation. |
+| Architecture Decision Matrix | [Architecture Decision Matrix](./architectural-decision-matrix.md) | Provides a decision lens for selecting architectural topology or style. |
+| Architecture Guidelines | [Architecture Guidelines](./architecture-guidelines.md) | Captures solution and software design principles. |
+| Learning Backlog | [Learning Backlog](./learning-backlog.md) | Tracks reference books, papers, and research themes. |
+
+## Technical Standard Categories
+
+Project-specific standards should be defined only when they are needed to guide implementation.
+
+| Category | When to Define | Expected Output |
+|---|---|---|
+| Coding Standards | When language, framework, module, or repository conventions affect consistency. | Naming, layering, packaging, dependency, and code-organization rules. |
+| API Standards | When the system exposes or consumes APIs. | API style, versioning, schema, compatibility, and error-response rules. |
+| Data Standards | When the system owns, stores, moves, or transforms data. | Ownership, classification, lifecycle, migration, and retention rules. |
+| Integration Standards | When the system exchanges data or events with other systems. | Contract, message, event, retry, idempotency, and ownership rules. |
+| Security Standards | When identity, access, sensitive data, compliance, or trust boundaries matter. | Authentication, authorization, data protection, audit, and secrets rules. |
+| Testing Standards | When architecture boundaries or quality attributes must be verified. | Unit, integration, contract, architecture, performance, and regression test expectations. |
+| Observability Standards | When operations, support, or reliability matter. | Logging, metrics, tracing, alerting, dashboard, and incident evidence expectations. |
+| Delivery Standards | When deployment, release, rollback, or environment management matters. | Build, release, deployment, rollback, migration, and environment rules. |
+
+## Project-Specific Standards Rule
+
+Do not define a standard simply because it is a best practice in general.
+
+Define a project-specific standard when it:
+
+- prevents likely implementation mistakes;
+- preserves an architecture boundary;
+- supports a required quality attribute;
+- clarifies team ownership;
+- protects security, reliability, data, or operational expectations;
+- makes human or AI-assisted development more consistent.
+
+## Research Use Rule
+
+Research sources should inform standards through distilled principles, practices, how-to guidance, frameworks, and selection rules.
+
+Do not copy research sections into this document. Link to or cite research sources from a research index or learning backlog, then record the actionable standard separately.
+
+## Open Project Standards
+
+<!-- AI_HINT: PENDING_DISCOVERY - DO NOT AUTOFILL -->
+Add project-specific standards here only after source facts, architecture decisions, or delivery needs justify them.
