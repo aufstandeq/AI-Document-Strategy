@@ -31,6 +31,9 @@ jobs:
     - name: Skill verifier fixtures validation (hard gate)
       run: python3 verify_skill_verifier_fixtures.py
 
+    - name: Source fact citation fixtures validation (hard gate)
+      run: python3 verify_source_fact_citation_fixtures.py
+
     - name: Structural validation (hard gate)
       run: python3 verify_docs.py
 
