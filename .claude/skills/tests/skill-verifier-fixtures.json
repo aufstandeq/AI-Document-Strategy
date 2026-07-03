@@ -1,0 +1,136 @@
+{
+  "schema_version": "0.1.0",
+  "purpose": "Machine-readable positive and negative cases for Claude skill structure validation.",
+  "approved_expected_results": [
+    "PASS",
+    "FAIL"
+  ],
+  "required_failure_categories": [
+    "folder-name",
+    "missing-skill-md",
+    "frontmatter",
+    "name-mismatch",
+    "description-trigger",
+    "nested-readme",
+    "parent-level-file"
+  ],
+  "cases": [
+    {
+      "id": "skill-valid-minimal-001",
+      "description": "Valid skill folder with required SKILL.md, matching name, and trigger description.",
+      "folder_name": "valid-skill",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: valid-skill\ndescription: Use when validating a minimal correct skill.\n---\n# Valid Skill\n\n## Purpose\n\nA valid minimal skill.\n"
+        }
+      ],
+      "expected_result": "PASS",
+      "expected_failures": []
+    },
+    {
+      "id": "skill-invalid-folder-name-001",
+      "description": "Skill folder name must be kebab-case.",
+      "folder_name": "Invalid_Skill",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: Invalid_Skill\ndescription: Use when validating folder naming.\n---\n# Invalid Skill\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "folder-name"
+      ]
+    },
+    {
+      "id": "skill-invalid-missing-skill-md-001",
+      "description": "Every skill folder must contain SKILL.md.",
+      "folder_name": "missing-skill-md",
+      "files": [],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "missing-skill-md"
+      ]
+    },
+    {
+      "id": "skill-invalid-missing-frontmatter-001",
+      "description": "SKILL.md must begin with YAML-style frontmatter.",
+      "folder_name": "missing-frontmatter",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "# Missing Frontmatter\n\nNo frontmatter here.\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "frontmatter"
+      ]
+    },
+    {
+      "id": "skill-invalid-name-mismatch-001",
+      "description": "Frontmatter name must match folder name.",
+      "folder_name": "expected-name",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: other-name\ndescription: Use when validating name matching.\n---\n# Expected Name\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "name-mismatch"
+      ]
+    },
+    {
+      "id": "skill-invalid-description-trigger-001",
+      "description": "Description must include trigger context using Use when.",
+      "folder_name": "missing-trigger-context",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: missing-trigger-context\ndescription: Validates a skill description without required trigger words.\n---\n# Missing Trigger Context\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "description-trigger"
+      ]
+    },
+    {
+      "id": "skill-invalid-nested-readme-001",
+      "description": "Individual skill folders must not contain README.md.",
+      "folder_name": "nested-readme",
+      "files": [
+        {
+          "path": "SKILL.md",
+          "content": "---\nname: nested-readme\ndescription: Use when validating README restrictions.\n---\n# Nested README\n"
+        },
+        {
+          "path": "README.md",
+          "content": "# Not allowed inside a skill folder\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "nested-readme"
+      ]
+    },
+    {
+      "id": "skill-invalid-parent-file-001",
+      "description": "Unexpected parent-level files under .claude/skills should fail unless explicitly allowed.",
+      "folder_name": null,
+      "files": [
+        {
+          "path": "unexpected.md",
+          "content": "# Unexpected Parent File\n"
+        }
+      ],
+      "expected_result": "FAIL",
+      "expected_failures": [
+        "parent-level-file"
+      ]
+    }
+  ]
+}
